@@ -73,7 +73,7 @@ bool Calculator::isOperator(char s)
             || s == 0x2B
             || s == 0x2D
             || s == 0x2F
-            || s == 0x5E); // ^ - степень
+            || s == 0x5E); // ^ - СЃС‚РµРїРµРЅСЊ
 }
 
 bool Calculator::isDotNumber(char s)
@@ -154,10 +154,10 @@ bool Calculator::isMinus(char s)
 
 void Calculator::isExpressionCorrect()
 {
-    int nNumberOfDots { 0 }; //колличество точек у числа
+    int nNumberOfDots { 0 }; //РєРѕР»Р»РёС‡РµСЃС‚РІРѕ С‚РѕС‡РµРє Сѓ С‡РёСЃР»Р°
 
     auto s = expression.begin();
-    //выражени должно начинаться с числа, если это не '-'
+    //РІС‹СЂР°Р¶РµРЅРё РґРѕР»Р¶РЅРѕ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ С‡РёСЃР»Р°, РµСЃР»Рё СЌС‚Рѕ РЅРµ '-'
     if (isOperator(*s) && *s != '-')
         throw std::invalid_argument("uncorrect expression");
 
@@ -169,26 +169,26 @@ void Calculator::isExpressionCorrect()
 
 
     for(; s != expression.end(); s++) {
-        //у числа может быть только одна точка или запятая
+        //Сѓ С‡РёСЃР»Р° РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РѕРґРЅР° С‚РѕС‡РєР° РёР»Рё Р·Р°РїСЏС‚Р°СЏ
         if (nNumberOfDots > 1)
             return throw std::invalid_argument("uncorrect expression");
 
-        //символ разрешен?
+        //СЃРёРјРІРѕР» СЂР°Р·СЂРµС€РµРЅ?
         if (!isCharAllowed(*s))
             throw std::invalid_argument("uncorrect symbol");
 
-        //не должно быть 2 операнда подряд, кроме скобок
+        //РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ 2 РѕРїРµСЂР°РЅРґР° РїРѕРґСЂСЏРґ, РєСЂРѕРјРµ СЃРєРѕР±РѕРє
         else if (TwoNeighborChars(s))
             throw std::invalid_argument("uncorrect expression");
 
-        //точка или запятая могут находиться только между числами
+        //С‚РѕС‡РєР° РёР»Рё Р·Р°РїСЏС‚Р°СЏ РјРѕРіСѓС‚ РЅР°С…РѕРґРёС‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РјРµР¶РґСѓ С‡РёСЃР»Р°РјРё
         else if (isDot(*s)) {
             nNumberOfDots++;
             if (!isDotCorrect(s))
                 throw std::invalid_argument("uncorrect expression");
         }
 
-        //сбрасываем счетчик запятых, если проходим через оператор
+        //СЃР±СЂР°СЃС‹РІР°РµРј СЃС‡РµС‚С‡РёРє Р·Р°РїСЏС‚С‹С…, РµСЃР»Рё РїСЂРѕС…РѕРґРёРј С‡РµСЂРµР· РѕРїРµСЂР°С‚РѕСЂ
         else if ((isOperator(*s) || isHook(*s))
                  && nNumberOfDots > 0)
             nNumberOfDots--;
@@ -206,12 +206,12 @@ void Calculator::isExpressionCorrect()
 
 int Calculator::RPNparse(char* s)
 {
-    /* Распознаем знаки арифметических операций */
+    /* Р Р°СЃРїРѕР·РЅР°РµРј Р·РЅР°РєРё Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РѕРїРµСЂР°С†РёР№ */
     switch (*s) {
     case '-':
-        /* Если минус является первым и не последним символом аргумента,
-         * значит пользователь ввел отрицательное число и опознавать его
-         * как операцию вычитания не нужно */
+        /* Р•СЃР»Рё РјРёРЅСѓСЃ СЏРІР»СЏРµС‚СЃСЏ РїРµСЂРІС‹Рј Рё РЅРµ РїРѕСЃР»РµРґРЅРёРј СЃРёРјРІРѕР»РѕРј Р°СЂРіСѓРјРµРЅС‚Р°,
+         * Р·РЅР°С‡РёС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРІРµР» РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ Рё РѕРїРѕР·РЅР°РІР°С‚СЊ РµРіРѕ
+         * РєР°Рє РѕРїРµСЂР°С†РёСЋ РІС‹С‡РёС‚Р°РЅРёСЏ РЅРµ РЅСѓР¶РЅРѕ */
         if (isNenegativeNumber(s))
             break;
         if (nCurrentIndex >= 2) {
@@ -256,18 +256,18 @@ int Calculator::RPNparse(char* s)
         return END;
     }
 
-    double temp = 0; //число
-    char * endptr = (char*)"";  //для определения ошибки
-    /* Пытаемся сконвертировать строковый аргумент в число */
+    double temp = 0; //С‡РёСЃР»Рѕ
+    char * endptr = (char*)"";  //РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РѕС€РёР±РєРё
+    /* РџС‹С‚Р°РµРјСЃСЏ СЃРєРѕРЅРІРµСЂС‚РёСЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєРѕРІС‹Р№ Р°СЂРіСѓРјРµРЅС‚ РІ С‡РёСЃР»Рѕ */
     std::stringstream ss(s);
     ss >> temp;
 
-    /* Вернуть ошибку `неопознанный аргумент' в случае неудачи */
+    /* Р’РµСЂРЅСѓС‚СЊ РѕС€РёР±РєСѓ `РЅРµРѕРїРѕР·РЅР°РЅРЅС‹Р№ Р°СЂРіСѓРјРµРЅС‚' РІ СЃР»СѓС‡Р°Рµ РЅРµСѓРґР°С‡Рё */
     if (*endptr != '\0')
         return UNK;  //
 
-    /* Проверяем, есть ли свободное место в стеке
-     * и сохраняем в нем операнд, иначе возвращаем ошибку переполнения */
+    /* РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё СЃРІРѕР±РѕРґРЅРѕРµ РјРµСЃС‚Рѕ РІ СЃС‚РµРєРµ
+     * Рё СЃРѕС…СЂР°РЅСЏРµРј РІ РЅРµРј РѕРїРµСЂР°РЅРґ, РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј РѕС€РёР±РєСѓ РїРµСЂРµРїРѕР»РЅРµРЅРёСЏ */
     if (nCurrentIndex < STKDPTH)
         dRPNValue[nCurrentIndex++] = temp;
     else
@@ -278,13 +278,13 @@ int Calculator::RPNparse(char* s)
 
 double Calculator::RPNcalc()
 {
-    /* Организуем цикл для перебора аргументов командной строки */
+    /* РћСЂРіР°РЅРёР·СѓРµРј С†РёРєР» РґР»СЏ РїРµСЂРµР±РѕСЂР° Р°СЂРіСѓРјРµРЅС‚РѕРІ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё */
     for(auto str : RPNStack) {
-        /* Пытаемся распознать текущий аргумент как число или
-         * символ арифметической операции */
+        /* РџС‹С‚Р°РµРјСЃСЏ СЂР°СЃРїРѕР·РЅР°С‚СЊ С‚РµРєСѓС‰РёР№ Р°СЂРіСѓРјРµРЅС‚ РєР°Рє С‡РёСЃР»Рѕ РёР»Рё
+         * СЃРёРјРІРѕР» Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕР№ РѕРїРµСЂР°С†РёРё */
         switch (RPNparse(str)) {
         case VAL: continue;
-            /* Вычисляем */
+            /* Р’С‹С‡РёСЃР»СЏРµРј */
         case eCalcEnum::ADD:
             dRPNValue[nCurrentIndex - 1] += dRPNValue[nCurrentIndex];
             break;
@@ -307,21 +307,21 @@ double Calculator::RPNcalc()
                 break;
             }
             else {
-                fprintf(stderr, "Деление на ноль!\n");
+                fprintf(stderr, "Р”РµР»РµРЅРёРµ РЅР° РЅРѕР»СЊ!\n");
                 return 0;
             }
 
-            /* Обработка ошибок */
+            /* РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РѕРє */
         case eCalcEnum::SUF:
-            fprintf(stderr, "Недостаточно операндов!\n");
+            fprintf(stderr, "РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РѕРїРµСЂР°РЅРґРѕРІ!\n");
             return 0;
 
         case eCalcEnum::SOF:
-            fprintf(stderr, "Переполнение стека!\n");
+            fprintf(stderr, "РџРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР°!\n");
             return 0;
 
         case eCalcEnum::UNK:
-            fprintf(stderr, "Неопознанный аргумент!\n");
+            fprintf(stderr, "РќРµРѕРїРѕР·РЅР°РЅРЅС‹Р№ Р°СЂРіСѓРјРµРЅС‚!\n");
             return 0;
 
         case eCalcEnum::END:
@@ -339,16 +339,16 @@ void Calculator::AddOperator(char *s)
         NumToLoad.pop();
         NumToLoad.push(++temp);
     }
-    //если *s имеет приоритет ниже или равный,
-    //то последний знак из SimbolStack уходит в массив выхода,
-    //а *s добавляется в SimbolStack. В ином случае все добавляется как обычно.
+    //РµСЃР»Рё *s РёРјРµРµС‚ РїСЂРёРѕСЂРёС‚РµС‚ РЅРёР¶Рµ РёР»Рё СЂР°РІРЅС‹Р№,
+    //С‚Рѕ РїРѕСЃР»РµРґРЅРёР№ Р·РЅР°Рє РёР· SimbolStack СѓС…РѕРґРёС‚ РІ РјР°СЃСЃРёРІ РІС‹С…РѕРґР°,
+    //Р° *s РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РІ SimbolStack. Р’ РёРЅРѕРј СЃР»СѓС‡Р°Рµ РІСЃРµ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РєР°Рє РѕР±С‹С‡РЅРѕ.
     else {
         if (((*s == '+' || *s == '-') &&
              (*SimbolStack.top() == '-' || *SimbolStack.top() == '+')) ||
                 ((*s == '+' || *s == '-') &&
                  (*SimbolStack.top() == '/' || *SimbolStack.top() == '*')) ||
                 ((*s == '*' || *s == '/') &&
-                 (*SimbolStack.top() == '/' || *SimbolStack.top() == '*'))) {//замещение
+                 (*SimbolStack.top() == '/' || *SimbolStack.top() == '*'))) {//Р·Р°РјРµС‰РµРЅРёРµ
             char *temp = SimbolStack.top();
             RPNStack.push_back(temp);
             SimbolStack.pop();
@@ -358,7 +358,7 @@ void Calculator::AddOperator(char *s)
                  (*SimbolStack.top() == '/' ||
                   *SimbolStack.top() == '*' ||
                   *SimbolStack.top() == '+' ||
-                  *SimbolStack.top() == '-')) {//добавление
+                  *SimbolStack.top() == '-')) {//РґРѕР±Р°РІР»РµРЅРёРµ
             SimbolStack.push(s);
             int temp = NumToLoad.top();
             NumToLoad.pop();
@@ -381,7 +381,7 @@ void Calculator::AddOperator(char *s)
             NumToLoad.push(++temp);
         }
         else
-        {//добавление
+        {//РґРѕР±Р°РІР»РµРЅРёРµ
             SimbolStack.push(s);
             int temp = NumToLoad.top();
             NumToLoad.pop();
@@ -392,7 +392,7 @@ void Calculator::AddOperator(char *s)
 }
 
 
-void Calculator::SimbStackExec(char *s)  //добавить символ или выгрузки
+void Calculator::SimbStackExec(char *s)  //РґРѕР±Р°РІРёС‚СЊ СЃРёРјРІРѕР» РёР»Рё РІС‹РіСЂСѓР·РєРё
 {
     switch (*s) {
     case '+':
@@ -416,13 +416,13 @@ void Calculator::SimbStackExec(char *s)  //добавить символ или выгрузки
         break;
 
     case '(':
-        SimbolStack.push(s); //пишем в стек символов
+        SimbolStack.push(s); //РїРёС€РµРј РІ СЃС‚РµРє СЃРёРјРІРѕР»РѕРІ
         NumToLoad.push(1);
         break;
 
     case ')':
-        //выгрузить последний символ из SimbolStack в RPNStack
-        //и удалить последние 2 символа из SimbolStack
+        //РІС‹РіСЂСѓР·РёС‚СЊ РїРѕСЃР»РµРґРЅРёР№ СЃРёРјРІРѕР» РёР· SimbolStack РІ RPNStack
+        //Рё СѓРґР°Р»РёС‚СЊ РїРѕСЃР»РµРґРЅРёРµ 2 СЃРёРјРІРѕР»Р° РёР· SimbolStack
         for (size_t i = 0; i < NumToLoad.top() - 1; i++) {
             char *temp = SimbolStack.top();
             RPNStack.push_back(temp);
@@ -437,12 +437,12 @@ void Calculator::SimbStackExec(char *s)  //добавить символ или выгрузки
 }
 
 
-//принимает строку - выражение, которое прошло проверку
+//РїСЂРёРЅРёРјР°РµС‚ СЃС‚СЂРѕРєСѓ - РІС‹СЂР°Р¶РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ РїСЂРѕС€Р»Рѕ РїСЂРѕРІРµСЂРєСѓ
 bool Calculator::RPNbuilder(char *s)
 {
     int nPPSize;
-    bool bNewSubExpression = true; //признак нового выражения (начало или скобки)
-    NumToLoad.push(0); //счетчик операций равен 0
+    bool bNewSubExpression = true; //РїСЂРёР·РЅР°Рє РЅРѕРІРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ (РЅР°С‡Р°Р»Рѕ РёР»Рё СЃРєРѕР±РєРё)
+    NumToLoad.push(0); //СЃС‡РµС‚С‡РёРє РѕРїРµСЂР°С†РёР№ СЂР°РІРµРЅ 0
     do {
         if (bNewSubExpression) {
             if (isHook(*s)) {
@@ -451,7 +451,7 @@ bool Calculator::RPNbuilder(char *s)
                 s += SIMB_SIZE;
                 continue;
             }
-            ConsiderNumber(s, &nPPSize); //в начале выражения всегда ЧИСЛО
+            ConsiderNumber(s, &nPPSize); //РІ РЅР°С‡Р°Р»Рµ РІС‹СЂР°Р¶РµРЅРёСЏ РІСЃРµРіРґР° Р§РРЎР›Рћ
             char* p = ExtractStr(s, nPPSize);
             RPNStack.push_back(p);
             s += nPPSize;
@@ -498,7 +498,7 @@ char *Calculator::ExtractStr(char *s, int offset)
     int index = 0;
     size = offset;
     if (size < 0)
-        throw "size меньше нуля!";
+        throw "size РјРµРЅСЊС€Рµ РЅСѓР»СЏ!";
 
     char *temp = new char[size + 1];  //                              <---------------------------------------------
     cleaner.push_back(temp);
@@ -511,12 +511,12 @@ char *Calculator::ExtractStr(char *s, int offset)
     return temp;
 }
 
-void Calculator::ConsiderNumber(char *s, int *pnSize) //пишем в память по указателю размер найденного числа pnSize
+void Calculator::ConsiderNumber(char *s, int *pnSize) //РїРёС€РµРј РІ РїР°РјСЏС‚СЊ РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ СЂР°Р·РјРµСЂ РЅР°Р№РґРµРЅРЅРѕРіРѕ С‡РёСЃР»Р° pnSize
 {
     *pnSize = 0;
     bool flag = true;
     do {
-        if (*s == '-' && flag) {//если число отрицательное
+        if (*s == '-' && flag) {//РµСЃР»Рё С‡РёСЃР»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ
             flag = false;
             (*pnSize)++;
             continue;

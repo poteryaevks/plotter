@@ -46,7 +46,7 @@ bool plot_gui::eventFilter(QObject *object, QEvent *event)
         if(event->type() == QEvent::ContextMenu
                 && !graphs.isEmpty()) {
             QMenu* menu = new QMenu(widget);
-            QAction *params = new QAction(qtd.toUnicode("Открыть параметры.."), menu);
+            QAction *params = new QAction(qtd.toUnicode("СњС‚РєСЂС‹С‚СЊ РїР°СЂР°РјРµС‚СЂС‹.."), menu);
             paramsDialog *dialog= new paramsDialog (&m_params, this);
             connect(params, SIGNAL(triggered()), dialog, SLOT(exec()));
             connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
@@ -214,7 +214,7 @@ void plot_gui::on_openfile_released()
 
 void plot_gui::loadFile()
 {
-    auto fileName = QFileDialog::getOpenFileName(this, qtd.toUnicode("Открытие файла"), QDir::currentPath(), tr("Data Files (*.csv)"));
+    auto fileName = QFileDialog::getOpenFileName(this, qtd.toUnicode("СњС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р°"), QDir::currentPath(), tr("Data Files (*.csv)"));
     if (!fileName.isEmpty())
         loadFile(fileName);
 }

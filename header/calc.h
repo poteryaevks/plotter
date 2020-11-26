@@ -11,20 +11,20 @@
 
 using namespace std;
 
-#define STKDPTH 320 /* Глубина стека */
+#define STKDPTH 320 /* Р“Р»СѓР±РёРЅР° СЃС‚РµРєР° */
 #define SIMB_SIZE  1
 
-/* Значения, возвращаемые функцией parse */
+/* Р—РЅР°С‡РµРЅРёСЏ, РІРѕР·РІСЂР°С‰Р°РµРјС‹Рµ С„СѓРЅРєС†РёРµР№ parse */
 enum eCalcEnum {
-    VAL =  0  /* В стек занесено новое значение */
-    ,ADD =  1  /* Сложение */
-    ,SUB =  2  /* Вычитание */
-    ,MUL =  3  /* Умножение */
-    ,DIV =  4  /* Деление */
-    ,DEG =  5  /* Возведение в степень */
-    ,SOF = -1  /* Переполнение стека */
-    ,SUF = -2  /* В стеке недостаточно операндов */
-    ,UNK = -3  /* Неопознанное значение */
+    VAL =  0  /* Р’ СЃС‚РµРє Р·Р°РЅРµСЃРµРЅРѕ РЅРѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ */
+    ,ADD =  1  /* РЎР»РѕР¶РµРЅРёРµ */
+    ,SUB =  2  /* Р’С‹С‡РёС‚Р°РЅРёРµ */
+    ,MUL =  3  /* РЈРјРЅРѕР¶РµРЅРёРµ */
+    ,DIV =  4  /* Р”РµР»РµРЅРёРµ */
+    ,DEG =  5  /* Р’РѕР·РІРµРґРµРЅРёРµ РІ СЃС‚РµРїРµРЅСЊ */
+    ,SOF = -1  /* РџРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР° */
+    ,SUF = -2  /* Р’ СЃС‚РµРєРµ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РѕРїРµСЂР°РЅРґРѕРІ */
+    ,UNK = -3  /* РќРµРѕРїРѕР·РЅР°РЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ */
     ,END = -4
 };
 
@@ -39,9 +39,9 @@ public:
     double Calc(const std::string &str);
 
 private:
-    //правила формирования выражения
+    //РїСЂР°РІРёР»Р° С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ РІС‹СЂР°Р¶РµРЅРёСЏ
     bool isNenegativeNumber(char* s);
-    void isExpressionCorrect(); //проверка на правильность записи мат. выражения
+    void isExpressionCorrect(); //РїСЂРѕРІРµСЂРєР° РЅР° РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ Р·Р°РїРёСЃРё РјР°С‚. РІС‹СЂР°Р¶РµРЅРёСЏ
     bool isCharAllowed(char s);
     bool TwoNeighborChars(std::string ::iterator &it);
     bool isNewLine(char s);
@@ -52,13 +52,13 @@ private:
     bool isDotCorrect(std::string ::iterator &it);
     bool isHook(char s);
     bool isDotNumber(char s);
-    bool NumberOfHooksCorrect(); //проверка числа скобок
+    bool NumberOfHooksCorrect(); //РїСЂРѕРІРµСЂРєР° С‡РёСЃР»Р° СЃРєРѕР±РѕРє
     //
     int RPNparse(char *); //
-    bool RPNbuilder(char* s); //формирует обратную польскую запись ОПЗ
+    bool RPNbuilder(char* s); //С„РѕСЂРјРёСЂСѓРµС‚ РѕР±СЂР°С‚РЅСѓСЋ РїРѕР»СЊСЃРєСѓСЋ Р·Р°РїРёСЃСЊ РћРџР—
     void ConsiderNumber(char *s, int *pnSize);
     char* ExtractStr(char *s, int offset);
-    double RPNcalc();  //расчет  стека ОПЗ
+    double RPNcalc();  //СЂР°СЃС‡РµС‚  СЃС‚РµРєР° РћРџР—
     void SimbStackExec(char *s);
     void AddOperator(char *s);
     //
@@ -66,7 +66,7 @@ private:
     double dRPNValue[STKDPTH];
     std::string expression;
     int nNumberOfOperators;
-    std::stack<char*> SimbolStack;  //не может содержать более 1 оператора
+    std::stack<char*> SimbolStack;  //РЅРµ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ Р±РѕР»РµРµ 1 РѕРїРµСЂР°С‚РѕСЂР°
     std::vector<char*>  RPNStack;
     std::stack<int>  NumToLoad;
     vector<char*> cleaner;
