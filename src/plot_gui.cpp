@@ -4,6 +4,7 @@
 
 #include <QFileDialog>
 #include <QDir>
+#include <QIcon>
 #include <QFile>
 #include <QStringList>
 

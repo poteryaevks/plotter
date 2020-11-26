@@ -31,7 +31,7 @@ private:
     void setupModel();
     void clearModel();
 signals:
-    replot();
+    void replot();
 private:
     QVector<plotParams*>* m_pdata;
     Ui::paramsDialog *ui;

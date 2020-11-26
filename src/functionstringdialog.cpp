@@ -1,6 +1,8 @@
 #include "functionstringdialog.h"
 #include "ui_functionstringdialog.h"
 
+#include <QIcon>
+
 functionStringDialog::functionStringDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::functionStringDialog)

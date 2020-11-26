@@ -85,7 +85,7 @@ void paramsDialog::on_replot_released()
         (*it)->setLineStyle(defaultLs[ls]);
         (*it)->setScatterStyle(defaultScatters[cs_style]);
     }
-    replot();
+    emit replot();
 }
 
 void paramsDialog::on_Cancel_released()
