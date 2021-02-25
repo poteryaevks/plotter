@@ -38,7 +38,6 @@ public:
 
 public slots:
     void configurePlot();
-    void loadFile();
     void functionExecute(const QString& expression);
 
 private slots:
@@ -48,14 +47,17 @@ private slots:
     void on_Xmax_valueChanged(double xmax);
     void on_Ymax_valueChanged(double ymax);
     void basicConfigurePlot();
-    void loadFile(const QString &fileName);
     void clear();
+    void showContextMenu(QPoint);
+    void showParamsPlot();
+    void openFile();
 
     bool eventFilter(QObject *object, QEvent *event);
     QPair<double, double> processLine(const QString& line);
-    void on_openfile_released();
 
 private:
+    void loadFile(const QString &fileName);
+
     QVector<plotParams*> m_params;
     QVector<QFile*> files;
     QVector<QCPGraph*> graphs;

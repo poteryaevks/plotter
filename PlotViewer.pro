@@ -26,7 +26,6 @@ INCLUDEPATH += header
 
 SOURCES += \
         src/main.cpp \
-        src/mainwindow.cpp \
         src/qcustomplot.cpp \
         src/plot_gui.cpp \
         src/calc.cpp \
@@ -37,7 +36,6 @@ SOURCES += \
         src/functionstringdialog.cpp
 
 HEADERS += \
-    header/mainwindow.h \
     header/qcustomplot.h \
     header/plot_gui.h \
     header/calc.h \
@@ -48,7 +46,6 @@ HEADERS += \
     header/functionstringdialog.h
 
 FORMS += \
-    ui/mainwindow.ui \
     ui/plot_gui.ui \
     ui/paramsdialog.ui \
     ui/functionstringdialog.ui

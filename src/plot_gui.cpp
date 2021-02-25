@@ -8,25 +8,23 @@
 #include <QFile>
 #include <QStringList>
 
-
-static QTextDecoder qtd(QTextCodec::codecForName("windows-1251"));
-static QTextCodec* tcUtf8 = QTextCodec::codecForName("UTF-8");
-
 plot_gui::plot_gui(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::plot_gui)
     , pfdialog(new functionStringDialog)
 {
     ui->setupUi(this);
-    ui->customPlot->installEventFilter(this);
+//    ui->customPlot->installEventFilter(this);
 
-    QObject::connect(ui->cbLegend, SIGNAL(toggled(bool)), this, SLOT(showHideLegend(bool)));
-    QObject::connect(ui->action_openfile, SIGNAL(triggered(bool)), this, SLOT(loadFile()));
-    QObject::connect(ui->action_clear, SIGNAL(triggered(bool)), this, SLOT(clear()));
-    QObject::connect(ui->action_clear, SIGNAL(triggered(bool)), this, SLOT(clear()));
-    QObject::connect(ui->action_exit, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
-    QObject::connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
-    QObject::connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
+    ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->cbLegend, SIGNAL(toggled(bool)), this, SLOT(showHideLegend(bool)));
+    connect(ui->openAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+    connect(ui->clearAction, SIGNAL(triggered(bool)), this, SLOT(clear()));
+    connect(ui->quitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
+    connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
+    connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
+    connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     setWindowIcon(QIcon(":/graph.png"));
     Qt::WindowFlags w_flags = pfdialog->windowFlags();
@@ -38,21 +36,36 @@ plot_gui::~plot_gui()
     delete ui;
 }
 
+void plot_gui::showContextMenu(QPoint pos)
+{
+    QPoint globalPos;
+    // если запрос от QAbstractScrollArea
+    if (sender()->inherits("QAbstractScrollArea"))
+        globalPos = qobject_cast<QAbstractScrollArea*>(sender())->viewport()->mapToGlobal(pos);
+    else
+        globalPos = ui->customPlot->mapToGlobal(pos);
+
+    QMenu menu;
+    QAction *openParams = new QAction(QString::fromUtf8("Открыть параметры..."), this);
+    menu.addAction(openParams);
+
+    connect(openParams, SIGNAL(triggered()), this, SLOT(showParamsPlot()));
+
+    menu.exec(globalPos);
+}
+
+void plot_gui::showParamsPlot()
+{
+    paramsDialog *dialog= new paramsDialog (&m_params, this);
+    connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
+    dialog->exec();
+}
 
 bool plot_gui::eventFilter(QObject *object, QEvent *event)
 {
     QWidget* widget = qobject_cast<QWidget*>(object);
-    if(object != nullptr) {
-        if(event->type() == QEvent::ContextMenu
-                && !graphs.isEmpty()) {
-            QMenu* menu = new QMenu(widget);
-            QAction *params = new QAction(qtd.toUnicode("ќткрыть параметры.."), menu);
-            paramsDialog *dialog= new paramsDialog (&m_params, this);
-            connect(params, SIGNAL(triggered()), dialog, SLOT(exec()));
-            connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
-            menu->addAction(params);
-            menu->popup(QCursor::pos());
-        }
+
+    if (object != nullptr) {
     }
     return false;
 }
@@ -76,8 +89,8 @@ void plot_gui::configurePlot()
 
 void plot_gui::basicConfigurePlot()
 {
-    ui->customPlot->xAxis->setLabel(qtd.toUnicode("X"));
-    ui->customPlot->yAxis->setLabel(qtd.toUnicode("Y(X)"));
+    ui->customPlot->xAxis->setLabel("X");
+    ui->customPlot->yAxis->setLabel("Y(X)");
 }
 
 
@@ -89,7 +102,7 @@ void plot_gui::functionExecute(const QString& expression)
     //
     QVector<double> Xs(points_number);
     QVector<double> Ys(points_number);
-    if(files.isEmpty()) {
+    if (files.isEmpty()) {
         QString function_x(expression);
         if (function_x.isEmpty())
             return;
@@ -124,6 +137,7 @@ QCPGraph *plot_gui::addGraph(const plotParams *params)
 {
     QCPGraph * pgraph = ui->customPlot->addGraph();
     plotParams *temp_params = const_cast<plotParams*>(params);
+
     if(pgraph != nullptr) {
         pgraph->setLineStyle(params->getLineStyle());
         setGraphColor(pgraph, params->getColor());
@@ -155,10 +169,9 @@ void plot_gui::clear()
 QPair<double, double> plot_gui::processLine(const QString& line)
 {
     QString edit_line = line;
-    edit_line.remove("\n");
-    edit_line.remove("\r");
-    QStringList list = edit_line.split(";");
-    if(list.size() < 2)
+    QStringList list = edit_line.simplified().split(";");       // remove \n, \r and split
+
+    if (list.size() < 2)
         return QPair<double, double>();
     else
         return (QPair<double, double>(list[0].toDouble(), list[1].toDouble()));
@@ -207,14 +220,10 @@ void plot_gui::on_Ymax_valueChanged(double ymax)
     ui->customPlot->replot();
 }
 
-void plot_gui::on_openfile_released()
+void plot_gui::openFile()
 {
-    loadFile();
-}
+    auto fileName = QFileDialog::getOpenFileName(this, QString::fromUtf8("Открытие файла"), QDir::currentPath(), QString::fromUtf8("Текстовые файлы (*.txt *.csv)"));
 
-void plot_gui::loadFile()
-{
-    auto fileName = QFileDialog::getOpenFileName(this, qtd.toUnicode("ќткрытие файла"), QDir::currentPath(), tr("Data Files (*.csv)"));
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -222,20 +231,22 @@ void plot_gui::loadFile()
 void plot_gui::loadFile(const QString &fileName)
 {
     QFile *pfile = new QFile(fileName);
-    if(!pfile->open(QFile::OpenModeFlag::ReadOnly)) {
+
+    if (!pfile->open(QFile::OpenModeFlag::ReadOnly)) {
         delete pfile;
         return;
     }
     //
     QVector<double> Xs(points_number);
     QVector<double> Ys(points_number);
-    //
-    int i { 0 };
+    int i = 0;
+
     while (!pfile->atEnd()) {
         QString line = pfile->readLine();
         QPair<double, double> pair = processLine(line);
         Xs[i] = pair.first;
-        Ys[i++] = pair.second;
+        Ys[i] = pair.second;
+        i++;
     }
     pfile->reset();
     //
