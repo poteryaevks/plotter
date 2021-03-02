@@ -27,30 +27,31 @@ INCLUDEPATH += header
 SOURCES += \
         src/main.cpp \
         src/qcustomplot.cpp \
-        src/plot_gui.cpp \
         src/calc.cpp \
         src/plotparams.cpp \
         src/paramsdialog.cpp \
         src/comboboxdelegate.cpp \
         src/base.cpp \
-        src/functionstringdialog.cpp
+        src/functionstringdialog.cpp \
+        src/mainwindow.cpp
 
 HEADERS += \
-    header/qcustomplot.h \
-    header/plot_gui.h \
-    header/calc.h \
-    header/plotparams.h \
-    header/paramsdialog.h \
-    header/comboboxdelegate.h \
-    header/base.h \
-    header/functionstringdialog.h
+        header/qcustomplot.h \
+        header/calc.h \
+        header/plotparams.h \
+        header/paramsdialog.h \
+        header/comboboxdelegate.h \
+        header/base.h \
+        header/functionstringdialog.h \
+        header/mainwindow.h
 
 FORMS += \
-    ui/plot_gui.ui \
-    ui/paramsdialog.ui \
-    ui/functionstringdialog.ui
+        ui/mainwindow.ui \
+        ui/paramsdialog.ui \
+        ui/functionstringdialog.ui \
+    ui/mainwindow.ui
 
 DISTFILES +=
 
 RESOURCES += \
-    res/res.qrc
+        res/res.qrc

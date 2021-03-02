@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "plot_gui.h"
+#include "mainwindow.h"
 
 //void setDarkPalette(QPalette &palette);
 
@@ -7,13 +7,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    plot_gui w;
+    MainWindow mainWindow;
 
 //    QPalette app_palette;
 //    setDarkPalette(app_palette);
     a.setStyle(QStyleFactory::create("Fusion"));
 
-    w.show();
+    mainWindow.show();
     return a.exec();
 }
 

@@ -1,8 +1,7 @@
-#ifndef plot_gui_H
-#define plot_gui_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QtWidgets/QMainWindow>
-#include "ui_plot_gui.h"
+#include <QMainWindow>
 #include "qcustomplot.h"
 #include "plotparams.h"
 #include "functionstringdialog.h"
@@ -20,20 +19,25 @@ struct graph {
     points graph_points;
 };
 
-struct plot {
+struct Plot {
     graphs plot_graphs;
-    QPoint max;
-    QPoint min;
+    QPair<double, double> max;
+    QPair<double, double> min;
 };
 
-class plot_gui : public QMainWindow
+namespace Ui {
+    class MainWindow;
+}
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    plot_gui(QWidget *parent = 0);
-    ~plot_gui();
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-    void setGraphColor(QCPGraph* g, Qt::GlobalColor color);
+//    void setGraphColor(QCPGraph* g, Qt::GlobalColor color);
+    void setGraphColor(QCPGraph* g, QColor color);
     QCPGraph *addGraph(const plotParams *params);
 
 public slots:
@@ -53,7 +57,8 @@ private slots:
     void openFile();
 
     bool eventFilter(QObject *object, QEvent *event);
-    QPair<double, double> processLine(const QString& line);
+//    QPair<double, double> processLine(const QString& line);
+    QVector<QPair<double, double>> parserLine(const QString&);
 
 private:
     void loadFile(const QString &fileName);
@@ -63,9 +68,9 @@ private:
     QVector<QCPGraph*> graphs;
 
     functionStringDialog *pfdialog;
-    Ui::plot_gui *ui;
+    Ui::MainWindow *ui;
     Calculator c;
-    plot m_plot;
+    Plot m_plot;
 };
 
-#endif // plot_gui_H
+#endif // MAINWINDOW_H

@@ -33,6 +33,6 @@ private:
 
 Q_DECLARE_TYPEINFO(plotParams, Q_MOVABLE_TYPE);
 
-const static plotParams defaultParams(Qt::black, QCPScatterStyle::ssPlus, QCPGraph::lsLine);
+const static plotParams defaultParams(Qt::black, QCPScatterStyle::ssDot, QCPGraph::lsLine);
 
 #endif // PLOTPARAMS_H
