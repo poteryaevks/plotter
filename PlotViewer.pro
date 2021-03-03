@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT += printsupport widgets xml sql
+CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,7 +34,10 @@ SOURCES += \
         src/comboboxdelegate.cpp \
         src/base.cpp \
         src/functionstringdialog.cpp \
-        src/mainwindow.cpp
+        src/mainwindow.cpp \
+        src/ibasegraphbuilder.cpp \
+        src/icustomplotbuilder.cpp \
+        src/customplot.cpp
 
 HEADERS += \
         header/qcustomplot.h \
@@ -43,7 +47,10 @@ HEADERS += \
         header/comboboxdelegate.h \
         header/base.h \
         header/functionstringdialog.h \
-        header/mainwindow.h
+        header/mainwindow.h \
+        header/ibasegraphbuilder.h \
+        header/icustomplotbuilder.h \
+        header/customplot.h
 
 FORMS += \
         ui/mainwindow.ui \

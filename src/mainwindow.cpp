@@ -15,8 +15,15 @@ MainWindow::MainWindow(QWidget *parent)
     , pfdialog(new functionStringDialog)
 {
     ui->setupUi(this);
-//    ui->customPlot->installEventFilter(this);
-    ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+//    ui->customPlotLayout->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    customPlotBuilderPtr = CustomPlot::CreateInstance();
+    m_graphWidget = customPlotBuilderPtr->widget();
+    m_graphWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QHBoxLayout  *layout = new QHBoxLayout(ui->frame);
+    ui->frame->setLayout(layout);
+    layout->addWidget(m_graphWidget);
 
     connect(ui->cbLegend, SIGNAL(toggled(bool)), this, SLOT(showHideLegend(bool)));
     connect(ui->openAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
@@ -24,11 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->quitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
     connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
     connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
-    connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    connect(m_graphWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
     setWindowIcon(QIcon(":/graph.png"));
-    Qt::WindowFlags w_flags = pfdialog->windowFlags();
-    pfdialog->setWindowFlags(w_flags & ~Qt::WindowContextHelpButtonHint);
 }
 
 MainWindow::~MainWindow()
@@ -43,7 +48,7 @@ void MainWindow::showContextMenu(QPoint pos)
     if (sender()->inherits("QAbstractScrollArea"))
         globalPos = qobject_cast<QAbstractScrollArea*>(sender())->viewport()->mapToGlobal(pos);
     else
-        globalPos = ui->customPlot->mapToGlobal(pos);
+        globalPos = m_graphWidget->mapToGlobal(pos);
 
     QMenu menu;
     QAction *openParams = new QAction(QString::fromUtf8("Открыть параметры..."), this);
@@ -56,43 +61,10 @@ void MainWindow::showContextMenu(QPoint pos)
 
 void MainWindow::showParamsPlot()
 {
-    paramsDialog *dialog= new paramsDialog (&m_params, this);
-    connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
-    dialog->exec();
+//    paramsDialog *dialog= new paramsDialog (&m_params, this);
+//    connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
+//    dialog->exec();
 }
-
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
-{
-    QWidget* widget = qobject_cast<QWidget*>(object);
-
-    if (object != nullptr) {
-    }
-    return false;
-}
-
-void MainWindow::configurePlot()
-{
-    ui->customPlot->xAxis->setRange(m_plot.min.first, m_plot.max.first);
-    ui->customPlot->yAxis->setRange(m_plot.min.second, m_plot.max.second);
-
-    std::size_t i{0};
-    foreach(QCPGraph* pgraph, graphs) {
-        auto ls = m_params[i]->getLineStyle();
-        auto sc = m_params[i]->getScatterStyle();
-        auto color = m_params[i++]->getColor();
-        pgraph->setLineStyle(ls);
-        setGraphColor(pgraph, color);
-        pgraph->setScatterStyle(QCPScatterStyle(sc));
-    }
-    ui->customPlot->replot();
-}
-
-void MainWindow::basicConfigurePlot()
-{
-    ui->customPlot->xAxis->setLabel("X");
-    ui->customPlot->yAxis->setLabel("Y(X)");
-}
-
 
 void MainWindow::functionExecute(const QString& expression)
 {
@@ -106,8 +78,8 @@ void MainWindow::functionExecute(const QString& expression)
         QString function_x(expression);
         if (function_x.isEmpty())
             return;
-        //
-        for(std::size_t i{0}; i < 100; ++i) {
+
+        for (std::size_t i{0}; i < 100; ++i) {
             QString func = function_x;
             QString str_i = QString::number(i);
             func.replace("x", str_i);
@@ -121,32 +93,11 @@ void MainWindow::functionExecute(const QString& expression)
             }
         }
     }
-    plotParams *params = new plotParams(defaultParams);
 
-    params->setPlotName(expressionName);
-    auto graph = addGraph(params);
-    if(graph != nullptr) {
-        graph->setData(Xs, Ys);
-        ui->customPlot->replot();
-    }
+//    customPlotBuilderPtr->addGraph();
+
     if(!err_info.isEmpty())
-        QMessageBox::warning(ui->customPlot, "Error" , err_info);
-}
-
-QCPGraph *MainWindow::addGraph(const plotParams *params)
-{
-    QCPGraph *pgraph = ui->customPlot->addGraph();
-    plotParams *temp_params = const_cast<plotParams*>(params);
-
-    if(pgraph != nullptr) {
-        pgraph->setLineStyle(params->getLineStyle());
-        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
-        pgraph->setScatterStyle(QCPScatterStyle(params->getScatterStyle()));
-        graphs << pgraph;
-        m_params << temp_params;
-        return pgraph;
-    }
-    return nullptr;
+        QMessageBox::warning(m_graphWidget, "Error" , err_info);
 }
 
 void MainWindow::clear()
@@ -155,15 +106,10 @@ void MainWindow::clear()
         if(pfile != nullptr)
             delete pfile;
     }
-    foreach(plotParams* pparams, m_params) {
-        if(pparams != nullptr)
-            delete pparams;
-    }
-    ui->customPlot->clearGraphs();
-    ui->customPlot->replot();
-    graphs.clear();
+
+    customPlotBuilderPtr->clearViewer();
+
     files.clear();
-    m_params.clear();
 }
 
 QVector<QPair<double, double>> MainWindow::parserLine(const QString& line)
@@ -189,58 +135,29 @@ QVector<QPair<double, double>> MainWindow::parserLine(const QString& line)
 //        return (QPair<double, double>(list[0].toDouble(), list[1].toDouble()));
 //}
 
-//void MainWindow::setGraphColor(QCPGraph* g, Qt::GlobalColor color)
-//{
-//    if (g == nullptr)
-//        return;
-
-//    auto pen = g->pen();
-//    pen.setColor(color);
-//    g->setPen(pen);
-//}
-
-void MainWindow::setGraphColor(QCPGraph* g, QColor color)
-{
-    if (g == nullptr)
-        return;
-
-    auto pen = g->pen();
-    pen.setColor(color);
-    g->setPen(pen);
-}
-
 void MainWindow::showHideLegend(bool /*p_onOff*/)
 {
-    ui->customPlot->legend->setVisible(ui->cbLegend->isChecked());
-    ui->customPlot->replot();
+    customPlotBuilderPtr->showHideLegend();
 }
 
 void MainWindow::on_Xmin_valueChanged(double xmin)
 {
-    m_plot.min.first = xmin;
-    configurePlot();
-    ui->customPlot->replot();
+    customPlotBuilderPtr->xAxisMinChanged(xmin);
 }
 
 void MainWindow::on_Ymin_valueChanged(double ymin)
 {
-    m_plot.min.second = ymin;
-    configurePlot();
-    ui->customPlot->replot();
+    customPlotBuilderPtr->yAxisMinChanged(ymin);
 }
 
 void MainWindow::on_Xmax_valueChanged(double xmax)
 {
-    m_plot.max.first = xmax;
-    configurePlot();
-    ui->customPlot->replot();
+    customPlotBuilderPtr->xAxisMaxChanged(xmax);
 }
 
 void MainWindow::on_Ymax_valueChanged(double ymax)
 {
-    m_plot.max.second = ymax;
-    configurePlot();
-    ui->customPlot->replot();
+    customPlotBuilderPtr->yAxisMaxChanged(ymax);
 }
 
 void MainWindow::openFile()
@@ -308,40 +225,21 @@ void MainWindow::loadFile(const QString &fileName)
 //        Ys[i] = pair.second;
 //        i++;
     }
+
     pfile->reset();
-    //
-    double xMax = 0;
-    double yMax = 0;
-    double xMin = 0;
-    double yMin = 0;
+
     for (int i = 0; i < dataGraphs.size(); i++) {
         QVector<QPair<double, double>>::const_iterator it(dataGraphs.at(i).begin());
         QVector<double> x;
         QVector<double> y;
 
         while (it != dataGraphs.at(i).end()) {
-            xMax = qMax(xMax, (*it).first);
-            yMax = qMax(yMax, (*it).second);
-            if (xMin == 0|| yMin == 0) {
-                xMin = xMax;
-                yMin = yMax;
-            }
-            xMin = qMin(xMin, (*it).first);
-            yMin = qMin(yMin, (*it).second);
             x << (*it).first;
             y << (*it).second;
             ++it;
         }
 
-        plotParams *params = new plotParams(defaultParams);
-        params->setPlotName(fileName);
-        //
-        auto pgraph= addGraph(params);
-        pgraph->setData(x, y);
-//        break;
+        customPlotBuilderPtr->addGraph(dataGraphs.at(i), fileName);
     }
-    ui->customPlot->xAxis->setRange(xMin, xMax);
-    ui->customPlot->yAxis->setRange(yMin, yMax);
-    ui->customPlot->replot();
 //    files << pfile;
 }

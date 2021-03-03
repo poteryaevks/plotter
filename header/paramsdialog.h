@@ -19,7 +19,7 @@ class paramsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit paramsDialog(QVector<plotParams*>* data, QWidget *parent = 0);
+    explicit paramsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
     ~paramsDialog();
 
 private slots:
@@ -33,7 +33,7 @@ private:
 signals:
     void replot();
 private:
-    QVector<plotParams*>* m_pdata;
+    QVector<PlotParams*>* m_pdata;
     Ui::paramsDialog *ui;
     QStandardItemModel *model;
     ColorDelegate *pcolorDel;

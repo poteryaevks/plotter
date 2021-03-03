@@ -4,14 +4,14 @@
 #include <QDialog>
 #include "qcustomplot.h"
 
-class plotParams : public QObject
+class PlotParams : public QObject
 {
     Q_OBJECT
 public:
-    explicit plotParams(QWidget *parent = 0) = delete;
-    plotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name = "plot", QWidget *parent = nullptr);
-    plotParams(const plotParams& params);
-    ~plotParams();
+    explicit PlotParams(QWidget *parent = 0) = delete;
+    PlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name = "plot", QWidget *parent = nullptr);
+    PlotParams(const PlotParams& params);
+    ~PlotParams();
 
 public:
     inline Qt::GlobalColor getColor() const { return m_color; }
@@ -31,8 +31,8 @@ private:
     QCPGraph::LineStyle m_ls;
 };
 
-Q_DECLARE_TYPEINFO(plotParams, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(PlotParams, Q_MOVABLE_TYPE);
 
-const static plotParams defaultParams(Qt::black, QCPScatterStyle::ssDot, QCPGraph::lsLine);
+const static PlotParams defaultParams(Qt::black, QCPScatterStyle::ssDot, QCPGraph::lsLine);
 
 #endif // PLOTPARAMS_H

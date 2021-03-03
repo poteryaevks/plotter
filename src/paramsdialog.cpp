@@ -3,7 +3,7 @@
 #include "base.h"
 
 
-paramsDialog::paramsDialog(QVector<plotParams*>* data, QWidget *parent) :
+paramsDialog::paramsDialog(QVector<PlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
     ui(new Ui::paramsDialog),

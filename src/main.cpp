@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-
 //void setDarkPalette(QPalette &palette)
 //{
 //    palette.setColor(QPalette::Window, QColor(53, 53, 53));

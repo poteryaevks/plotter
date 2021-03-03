@@ -1,6 +1,6 @@
 #include "plotparams.h"
 
-plotParams::plotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name, QWidget *parent)
+PlotParams::PlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name, QWidget *parent)
     : QObject(parent)
      ,m_color(color)
      ,m_scShape(shape)
@@ -10,7 +10,7 @@ plotParams::plotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shap
 
 }
 
-plotParams::plotParams(const plotParams& params)
+PlotParams::PlotParams(const PlotParams& params)
 {
     auto color = params.getColor();
     auto ls = params.getLineStyle();
@@ -20,7 +20,7 @@ plotParams::plotParams(const plotParams& params)
     this->setScatterStyle(sc_style);
 }
 
-plotParams::~plotParams()
+PlotParams::~PlotParams()
 {
 
 }
