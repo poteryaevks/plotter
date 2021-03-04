@@ -9,8 +9,24 @@ CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+unix: {
+        CONFIG (debug, debug|release) {
+                TARGET = PlotViewerd
+        } else {
+                TARGET = PlotViewer
+        }
+} else {
+        TARGET = $$qtLibraryTarget(PlotViewer)
+}
+
+VERSION = 1.0.0
+
+CONFIG += debug_and_release build_all
+
 TARGET = PlotViewer
-TEMPLATE = app
+TEMPLATE = lib
+
+DEFINES += Library_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -50,7 +66,8 @@ HEADERS += \
         header/mainwindow.h \
         header/ibasegraphbuilder.h \
         header/icustomplotbuilder.h \
-        header/customplot.h
+        header/customplot.h \
+    header/libraryglobal.h
 
 FORMS += \
         ui/mainwindow.ui \

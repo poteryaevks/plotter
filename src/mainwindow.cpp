@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "plotparams.h"
 #include "paramsdialog.h"
+#include "customplot.h"
 
 #include <QFileDialog>
 #include <QDir>

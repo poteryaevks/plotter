@@ -18,12 +18,15 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
         virtual void showViewer() = 0;
         virtual void clearViewer() = 0;
         virtual void addValues(const QVector<QPair<double, double>> &values) = 0;
+        virtual void addValues(const std::vector<std::pair<double, double>> &values) = 0;
         virtual void addGraph(const QVector<QPair<double, double>> &values, const QString &nameGraph = QString()) = 0;
+//        virtual void addGraph(const std::vector<std::pair<double, double>> &values, const QString &nameGraph = QString()) = 0;
         virtual void xAxisMinChanged(double value) = 0;
         virtual void xAxisMaxChanged(double value) = 0;
         virtual void yAxisMinChanged(double value) = 0;
         virtual void yAxisMaxChanged(double value) = 0;
         virtual void showHideLegend() = 0;
+        virtual void draw() = 0;
         static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
 };
 

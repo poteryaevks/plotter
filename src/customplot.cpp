@@ -1,8 +1,15 @@
 #include "customplot.h"
+#include <QScreen>
+
+extern "C" Library_EXPORT CustomPlotBuilderPtr Instance()
+{
+    return CustomPlot::CreateInstance();
+}
 
 CustomPlot::CustomPlot()
     : m_plot(new QCustomPlot)
 {
+    m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     qDebug() << "create QCustomPlot";
 }
 
@@ -18,8 +25,18 @@ QWidget* CustomPlot::widget()
 
 void CustomPlot::showViewer()
 {
-    if (m_plot != nullptr)
+    if (m_plot != nullptr) {
+        QRect screenGeometry = QGuiApplication::screens()[0]->geometry();
+
+        // resize widget
+        m_plot->resize(screenGeometry.width() / 2, screenGeometry.height() / 2);
+        // set center display
+        int x = (screenGeometry.width() - m_plot->width()) / 2;
+        int y = (screenGeometry.height() - m_plot->height()) / 2;
+        m_plot->move(x, y);
+
         m_plot->show();
+    }
 }
 
 void CustomPlot::clearViewer()
@@ -37,33 +54,39 @@ void CustomPlot::clearViewer()
 
 void CustomPlot::addValues(const QVector<QPair<double, double>> &values)
 {
-    m_values.append(values);
+    m_graphsValues.append(values);
+}
+
+void CustomPlot::addValues(const std::vector<std::pair<double, double>> &values)
+{
+    GraphValues graphValues;
+
+    for (auto v : values)
+        graphValues.append(qMakePair(v.first, v.second));
+
+    m_graphsValues.append(graphValues);
 }
 
 void CustomPlot::addGraph(const QVector<QPair<double, double>> &values, const QString &nameGraph)
 {
-    QCPGraph *pgraph = m_plot->addGraph();
     PlotParams *params = new PlotParams(defaultParams);
     params->setPlotName(nameGraph);
 
-    if (pgraph != nullptr) {
-        m_values.append(values);
-        pgraph->setLineStyle(params->getLineStyle());
-        pgraph->setScatterStyle(QCPScatterStyle(params->getScatterStyle()));
-        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
+    QCPGraph* graph = createGraph(params);
 
-        QVector<QPair<double, double>>::const_iterator it(values.begin());
+    if (graph != nullptr) {
+        m_graphsValues.append(values);
+
         QVector<double> xValues;
         QVector<double> yValues;
 
-        while (it != values.end()) {
-            xValues << (*it).first;
-            yValues << (*it).second;
-            ++it;
+        for (auto pointValue : values) {
+            xValues << pointValue.first;
+            yValues << pointValue.second;
         }
 
-        pgraph->setData(xValues, yValues);
-        m_graphs << pgraph;
+        graph->setData(xValues, yValues);
+        m_graphs << graph;
         m_params << params;
         updateAxis();
         repaintPlot();
@@ -100,6 +123,45 @@ void CustomPlot::showHideLegend()
     m_plot->replot();
 }
 
+void CustomPlot::draw()
+{
+    for (auto graphValues : m_graphsValues) {
+        PlotParams *params = new PlotParams(defaultParams);
+        QCPGraph* graph = createGraph(params);
+
+        if (graph != nullptr) {
+            QVector<double> xValues;
+            QVector<double> yValues;
+
+            for (auto pointValue : graphValues) {
+                xValues << pointValue.first;
+                yValues << pointValue.second;
+            }
+            graph->setData(xValues, yValues);
+            m_graphs << graph;
+            m_params << params;
+        }
+    }
+    updateAxis();
+    repaintPlot();
+}
+
+QCPGraph* CustomPlot::createGraph(PlotParams *params)
+{
+    QCPGraph *pgraph = m_plot->addGraph();
+
+    if (pgraph != nullptr && params != nullptr) {
+        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
+        pgraph->setLineStyle(params->getLineStyle());
+        pgraph->setScatterStyle(QCPScatterStyle(params->getScatterStyle()));
+        if (!params->getPlotName().isEmpty())
+            pgraph->setName(params->getPlotName());
+
+        return pgraph;
+    }
+    return nullptr;
+}
+
 void CustomPlot::updateAxis()
 {
     double xMax = 0;
@@ -107,10 +169,10 @@ void CustomPlot::updateAxis()
     double xMin = 0;
     double yMin = 0;
 
-    for (int i = 0; i < m_values.size(); i++) {
-        QVector<QPair<double, double>>::const_iterator it(m_values.at(i).begin());
+    for (int i = 0; i < m_graphsValues.size(); i++) {
+        QVector<QPair<double, double>>::const_iterator it(m_graphsValues.at(i).begin());
 
-        while (it != m_values.at(i).end()) {
+        while (it != m_graphsValues.at(i).end()) {
             xMax = qMax(xMax, (*it).first);
             yMax = qMax(yMax, (*it).second);
 
