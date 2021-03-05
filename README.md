@@ -1,6 +1,6 @@
 ## Пример использования прои подключении в виде библиотеки
-```
-#include "../plotdraw/header/icustomplotbuilder.h"
+```c++
+#include "icustomplotbuilder.h"
 // ...
 QLibrary lib(nameLib);
 if(!lib.load()) {
@@ -17,9 +17,7 @@ if (instance != nullptr) {
     instance->showViewer();
 
     std::vector<std::pair<double, double>> data;        // QVector<QPair<double, double>> data
-
     // ...
-
     instance->addValues(data);                          // Добавление данных
     instance->draw();                                   // Отрисовка графиков
 
