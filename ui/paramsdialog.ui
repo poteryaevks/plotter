@@ -18,9 +18,9 @@
     <widget class="QTableView" name="tableView"/>
    </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="replot">
+    <widget class="QPushButton" name="applyButton">
      <property name="text">
-      <string>Replot</string>
+      <string>Apply</string>
      </property>
     </widget>
    </item>
@@ -38,14 +38,47 @@
     </spacer>
    </item>
    <item row="1" column="2">
-    <widget class="QPushButton" name="Cancel">
+    <widget class="QPushButton" name="cancelButton">
      <property name="text">
-      <string>Exit</string>
+      <string>Cancel</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>applyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ParamsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ParamsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>346</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

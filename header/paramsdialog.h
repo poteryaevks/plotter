@@ -8,37 +8,29 @@
 #include "plotparams.h"
 #include "comboboxdelegate.h"
 
-static const int COLUMNS_NUM { 4 };
-
 namespace Ui {
-class ParamsDialog;
+    class ParamsDialog;
 }
 
 class ParamsDialog : public QDialog
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    explicit ParamsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
-    ~ParamsDialog();
+    public:
+        explicit ParamsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
+        ~ParamsDialog();
 
-private slots:
-    void on_replot_released();
-    void on_Cancel_released();
+    private:
+        void setupModel();
 
-private:
-    bool eventFilter(QObject *object, QEvent *event);
-    void setupModel();
-    void clearModel();
-signals:
-    void replot();
-private:
-    QVector<PlotParams*>* m_pdata;
-    Ui::ParamsDialog *ui;
-    QStandardItemModel *model;
-    ColorDelegate *pcolorDel;
-    ListDelegate *pLsListDel;
-    ListDelegate *pScListDel;
+        QVector<PlotParams*>* m_pdata;
+        Ui::ParamsDialog *ui;
+        QStandardItemModel *model;
+        ListDelegate *pLsListDel;
+        ListDelegate *pScListDel;
+
+    private slots:
+        void writeParams();
 };
 
 

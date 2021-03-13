@@ -64,8 +64,10 @@ void MainWindow::showParamsPlot()
 {
     if (customPlotBuilderPtr != nullptr) {
         ParamsDialog *dialog= new ParamsDialog(&customPlotBuilderPtr->params(), this);
-        connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
-        dialog->exec();
+
+        if (dialog->exec() == QDialog::Accepted) {
+//            configurePlot();
+        }
     }
 }
 

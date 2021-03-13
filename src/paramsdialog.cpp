@@ -6,89 +6,67 @@
 ParamsDialog::ParamsDialog(QVector<PlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
-    ui(new Ui::ParamsDialog),
-    pcolorDel(new ColorDelegate)
+    ui(new Ui::ParamsDialog)
 {
     ui->setupUi(this);
 
-    QList<QString> list = defaultLs.keys();
-    pLsListDel = new ListDelegate(list);
-    //
-    list = defaultScatters.keys();
-    pScListDel = new ListDelegate(list);
-    installEventFilter(this);
-}
+    setupModel();
+    ui->tableView->setModel(model);
+    ui->tableView->setItemDelegateForColumn(1, new ColorDelegate(defaultColors, this));
+    ui->tableView->setItemDelegateForColumn(2, new ListDelegate(defaultLs.keys(), this));
+    ui->tableView->setItemDelegateForColumn(3, new ListDelegate(defaultScatters.keys(), this));
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
+    connect(ui->applyButton, &QPushButton::clicked, this, &ParamsDialog::writeParams);
+}
 
 ParamsDialog::~ParamsDialog()
 {
     delete ui;
 }
 
-bool ParamsDialog::eventFilter(QObject */*object*/, QEvent *event)
-{
-    if(m_pdata->isEmpty())
-        return false;
-    if(event->type() == QEvent::Show) {
-        setupModel();
-        ui->tableView->setModel(model);
-        ui->tableView->setItemDelegateForColumn(1, pcolorDel);
-        ui->tableView->setItemDelegateForColumn(2, pLsListDel);
-        ui->tableView->setItemDelegateForColumn(3, pScListDel);
-    }
-    if(event->type() == QEvent::Hide) {
-        clearModel();
-    }
-    return false;
-}
-
-
 void ParamsDialog::setupModel()
 {
-    auto row_number = m_pdata->size();
-    model = new QStandardItemModel(row_number, COLUMNS_NUM, this);
-    model->setHeaderData(0, Qt::Horizontal, tr("Name"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Color"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Line style"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Point style"));
-    //
-    for(std::size_t i {0}; i < model->rowCount(); ++i) {
+    model = new QStandardItemModel(this);
+    model->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Color") << tr("Line style") << tr("Point style"));
+    QStandardItem *item = nullptr;
+
+    for(int i = 0; i < m_pdata->size(); ++i) {
+        QList<QStandardItem*> items;
+
+        item = new QStandardItem(m_pdata->at(i)->getPlotName());
+        items << item;
+
         Qt::GlobalColor color = m_pdata->at(i)->getColor();
         auto color_index = defaultColors.indexOf(color);
-        //
+
+        item = new QStandardItem();
+        item->setData(color_index);
+        items << item;
+
         auto ls_index = m_pdata->at(i)->getLineStyle();
-        auto ls_name = defaultLs.key(ls_index);
-        //
+        item = new QStandardItem(defaultLs.key(ls_index));
+        items << item;
+
         auto sc_index = m_pdata->at(i)->getScatterStyle();
-        auto sc_name = defaultScatters.key(sc_index);
-        //
-        model->setData(model->index(i, 0, QModelIndex()), m_pdata->at(i)->getPlotName());
-        model->setData(model->index(i, 1, QModelIndex()), color_index);
-        model->setData(model->index(i, 2, QModelIndex()), ls_name);
-        model->setData(model->index(i, 3, QModelIndex()), sc_name);
+        item = new QStandardItem(defaultScatters.key(sc_index));
+        items << item;
+
+        model->appendRow(items);
     }
 }
 
-void ParamsDialog::clearModel()
+void ParamsDialog::writeParams()
 {
-    delete model;
-}
+    int i = 0;
 
-void ParamsDialog::on_replot_released()
-{
-    auto it = (*m_pdata).begin();
-    for(std::size_t i { 0 }; it != (*m_pdata).end(); ++it, ++i) {
+    for(auto it = (*m_pdata).begin(); it != (*m_pdata).end(); ++it) {
         auto color_index = model->index(i, 1).data().toInt();
         auto ls = model->index(i, 2).data().toString();
         auto cs_style = model->index(i, 3).data().toString();
         (*it)->setColor(defaultColors[color_index]);
         (*it)->setLineStyle(defaultLs[ls]);
         (*it)->setScatterStyle(defaultScatters[cs_style]);
+        ++i;
     }
-    emit replot();
-}
-
-void ParamsDialog::on_Cancel_released()
-{
-    accept();
 }
