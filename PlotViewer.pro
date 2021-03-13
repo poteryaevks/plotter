@@ -76,5 +76,6 @@ FORMS += \
 
 DISTFILES +=
 
-RESOURCES += \
-        res/res.qrc
+RESOURCES += res.qrc
+
+TRANSLATIONS += PlotViewer_ru.ts

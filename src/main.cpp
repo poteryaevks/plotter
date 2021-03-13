@@ -5,16 +5,22 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
     MainWindow mainWindow;
 
 //    QPalette app_palette;
 //    setDarkPalette(app_palette);
-    a.setStyle(QStyleFactory::create("Fusion"));
+    app.setStyle(QStyleFactory::create("Fusion"));
+
+    QTranslator translator;
+    // look up e.g. :/translations/myapp_de.qm
+    if (translator.load(QLocale(), QLatin1String("PlotViewer"), QLatin1String("_"), QLatin1String(":/translations/res")))
+        app.installTranslator(&translator);
+    qDebug() << QLatin1String("PlotViewer") + QLatin1String("_") + QLocale().name();
 
     mainWindow.show();
-    return a.exec();
+    return app.exec();
 }
 
 //void setDarkPalette(QPalette &palette)

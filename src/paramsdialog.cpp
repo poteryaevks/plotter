@@ -2,7 +2,6 @@
 #include "ui_paramsdialog.h"
 #include "base.h"
 
-
 ParamsDialog::ParamsDialog(QVector<PlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
@@ -41,7 +40,7 @@ void ParamsDialog::setupModel()
         auto color_index = defaultColors.indexOf(color);
 
         item = new QStandardItem();
-        item->setData(color_index);
+        item->setData(color_index, Qt::UserRole);
         items << item;
 
         auto ls_index = m_pdata->at(i)->getLineStyle();

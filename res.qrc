@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/graph.png</file>
+    </qresource>
+    <qresource prefix="/translations">
+        <file>res/PlotViewer_ru.qm</file>
+    </qresource>
+</RCC>
