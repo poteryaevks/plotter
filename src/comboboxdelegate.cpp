@@ -4,19 +4,16 @@
 QVariant ColorModel::data(const QModelIndex &index, int role) const
 {
     auto row = index.row();
-    if (!index.isValid()
-            || row >= m_colors.size())
+    if (!index.isValid() || row >= m_colors.size())
         return QVariant();
-    else if(role == Qt::BackgroundColorRole)
+    else if (role == Qt::BackgroundColorRole)
         return QColor(m_colors[row]);
     else
         return QVariant();
 }
 
 //------------------------ColorDelegate------------------------//
-QWidget *ColorDelegate::createEditor(QWidget *parent,
-                                     const QStyleOptionViewItem &/*option*/,
-                                     const QModelIndex &index) const
+QWidget *ColorDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QComboBox *editor = new QComboBox(parent);
     ColorModel *model = new ColorModel(items, parent);
@@ -29,17 +26,15 @@ void ColorDelegate::setEditorData(QWidget *editor,
 {
     QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
     comboBox->showPopup();
-    auto row = index.data().toInt();
+    auto row = index.data(Qt::UserRole).toInt();
     comboBox->setCurrentIndex(row);
 }
 
-void ColorDelegate::setModelData(QWidget *editor,
-                                 QAbstractItemModel *model,
-                                 const QModelIndex &index) const
+void ColorDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
-    QVariant row (comboBox->currentIndex());
-    model->setData(index, row);
+    int row = comboBox->currentIndex();
+    model->setData(index, row, Qt::UserRole);
 }
 
 void ColorDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index ) const
@@ -52,9 +47,10 @@ void ColorDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     QStyleOptionComboBox style;
     style.rect = option.rect;
     //
-    QVariant value = index.data();
-    int row { 0 };
-    if(value.isValid())
+    QVariant value = index.data(Qt::UserRole);
+    int row = 0;
+
+    if (value.isValid())
         row  = value.toInt();
     //
     QColor color(items[row]);

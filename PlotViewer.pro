@@ -48,7 +48,6 @@ SOURCES += \
         src/plotparams.cpp \
         src/paramsdialog.cpp \
         src/comboboxdelegate.cpp \
-        src/base.cpp \
         src/functionstringdialog.cpp \
         src/mainwindow.cpp \
         src/ibasegraphbuilder.cpp \
