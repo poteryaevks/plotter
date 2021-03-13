@@ -36,6 +36,8 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         void showHideLegend() override;
         void draw() override;
 
+        QVector<PlotParams*>& params() { return m_params; }
+
     private:
         ConfigPlot m_configPlot;
         QCustomPlot *m_plot;

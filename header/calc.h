@@ -65,7 +65,6 @@ private:
     int nCurrentIndex;
     double dRPNValue[STKDPTH];
     std::string expression;
-    int nNumberOfOperators;
     std::stack<char*> SimbolStack;  //не может содержать более 1 оператора
     std::vector<char*>  RPNStack;
     std::stack<int>  NumToLoad;

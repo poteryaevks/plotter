@@ -3,10 +3,10 @@
 #include "base.h"
 
 
-paramsDialog::paramsDialog(QVector<PlotParams*>* data, QWidget *parent) :
+ParamsDialog::ParamsDialog(QVector<PlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
-    ui(new Ui::paramsDialog),
+    ui(new Ui::ParamsDialog),
     pcolorDel(new ColorDelegate)
 {
     ui->setupUi(this);
@@ -20,12 +20,12 @@ paramsDialog::paramsDialog(QVector<PlotParams*>* data, QWidget *parent) :
 }
 
 
-paramsDialog::~paramsDialog()
+ParamsDialog::~ParamsDialog()
 {
     delete ui;
 }
 
-bool paramsDialog::eventFilter(QObject */*object*/, QEvent *event)
+bool ParamsDialog::eventFilter(QObject */*object*/, QEvent *event)
 {
     if(m_pdata->isEmpty())
         return false;
@@ -43,7 +43,7 @@ bool paramsDialog::eventFilter(QObject */*object*/, QEvent *event)
 }
 
 
-void paramsDialog::setupModel()
+void ParamsDialog::setupModel()
 {
     auto row_number = m_pdata->size();
     model = new QStandardItemModel(row_number, COLUMNS_NUM, this);
@@ -69,12 +69,12 @@ void paramsDialog::setupModel()
     }
 }
 
-void paramsDialog::clearModel()
+void ParamsDialog::clearModel()
 {
     delete model;
 }
 
-void paramsDialog::on_replot_released()
+void ParamsDialog::on_replot_released()
 {
     auto it = (*m_pdata).begin();
     for(std::size_t i { 0 }; it != (*m_pdata).end(); ++it, ++i) {
@@ -88,7 +88,7 @@ void paramsDialog::on_replot_released()
     emit replot();
 }
 
-void paramsDialog::on_Cancel_released()
+void ParamsDialog::on_Cancel_released()
 {
     accept();
 }

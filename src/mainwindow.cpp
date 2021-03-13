@@ -62,9 +62,11 @@ void MainWindow::showContextMenu(QPoint pos)
 
 void MainWindow::showParamsPlot()
 {
-//    paramsDialog *dialog= new paramsDialog (&m_params, this);
-//    connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
-//    dialog->exec();
+    if (customPlotBuilderPtr != nullptr) {
+        ParamsDialog *dialog= new ParamsDialog(&customPlotBuilderPtr->params(), this);
+        connect(dialog, SIGNAL(replot()), this, SLOT(configurePlot()));
+        dialog->exec();
+    }
 }
 
 void MainWindow::functionExecute(const QString& expression)

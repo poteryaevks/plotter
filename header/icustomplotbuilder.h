@@ -5,6 +5,7 @@
 #include <memory>
 #include <QWidget>
 
+class PlotParams;
 class ICustomPlotBuilder;
 using CustomPlotBuilderPtr = std::shared_ptr<ICustomPlotBuilder>;
 
@@ -72,6 +73,11 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
          * \brief draw Рисует графики по данным, добавленным ранее
          */
         virtual void draw() = 0;
+
+        /*!
+         * \brief params Получить список параметров для графиков
+         */
+        virtual QVector<PlotParams*>& params() = 0;
         static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
 };
 

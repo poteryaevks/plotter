@@ -24,7 +24,7 @@ VERSION = 1.0.0
 CONFIG += debug_and_release build_all
 
 TARGET = PlotViewer
-TEMPLATE = lib
+TEMPLATE = app
 
 DEFINES += Library_LIBRARY
 

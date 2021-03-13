@@ -11,16 +11,16 @@
 static const int COLUMNS_NUM { 4 };
 
 namespace Ui {
-class paramsDialog;
+class ParamsDialog;
 }
 
-class paramsDialog : public QDialog
+class ParamsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit paramsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
-    ~paramsDialog();
+    explicit ParamsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
+    ~ParamsDialog();
 
 private slots:
     void on_replot_released();
@@ -34,7 +34,7 @@ signals:
     void replot();
 private:
     QVector<PlotParams*>* m_pdata;
-    Ui::paramsDialog *ui;
+    Ui::ParamsDialog *ui;
     QStandardItemModel *model;
     ColorDelegate *pcolorDel;
     ListDelegate *pLsListDel;
