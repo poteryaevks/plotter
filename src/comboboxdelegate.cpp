@@ -63,26 +63,26 @@ void ColorDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 }
 
 //------------------------LsDelegate------------------------//
-QWidget *ListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
+QWidget *ListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+
     QComboBox *editor = new QComboBox(parent);
-    QStringListModel *model = new QStringListModel(items, parent);
-    editor->setModel(model);
+    editor->addItems(items);
     return editor;
 }
 
 void ListDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
-    auto i = index.data().toInt();
-    comboBox->setCurrentText(items[i]);
+    comboBox->setCurrentIndex(items.indexOf(index.data().toString()));
 }
 
 void ListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
-    auto i = comboBox->currentIndex();
-    model->setData(index, items[i]);
+    model->setData(index, items[comboBox->currentIndex()]);
 }
 
 void ListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index ) const
