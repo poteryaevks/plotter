@@ -7,15 +7,18 @@
 #include "calc.h"
 #include "customplot.h"
 
-static const double step { 1 };
-static const double points_number { 10000 };
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
+    using Point = QPair<double, double>;
+    using Graph = QVector<Point>;
+    using FilePtr = std::unique_ptr<QFile>;
+
+
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = 0);
@@ -25,6 +28,7 @@ public slots:
     void functionExecute(const QString& expression);
 
 private slots:
+
     void showHideLegend(bool p_onOff);
     void on_Xmin_valueChanged(double xmin);
     void on_Ymin_valueChanged(double ymin);
@@ -35,17 +39,17 @@ private slots:
     void showParamsPlot();
     void openFile();
 
-//    QPair<double, double> processLine(const QString& line);
-    QVector<QPair<double, double>> parserLine(const QString&);
-
 private:
+
+    QVector<Point> parseLine(const QString&);
     void loadFile(const QString &fileName);
 
-    QVector<QFile*> files;
+private:
 
+    QVector<QFile*> files;
     functionStringDialog *pfdialog;
     Ui::MainWindow *ui;
-    Calculator c;
+    Calculator calc_;
     QWidget *m_graphWidget;
     CustomPlotBuilderPtr customPlotBuilderPtr;
 };
