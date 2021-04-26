@@ -47,6 +47,7 @@ void CustomPlot::clearViewer()
     }
 
     m_configPlot = {};
+    m_graphsValues.clear();
     m_graphs.clear();
     m_params.clear();
     m_plot->clearGraphs();
