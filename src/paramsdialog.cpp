@@ -59,7 +59,7 @@ void ParamsDialog::writeParams()
 {
     int i = 0;
 
-    for(auto it = (*m_pdata).begin(); it != (*m_pdata).end(); ++it) {
+    for (auto it = (*m_pdata).begin(); it != (*m_pdata).end(); ++it) {
         auto color_index = model->index(i, 1).data().toInt();
         auto ls = model->index(i, 2).data().toString();
         auto cs_style = model->index(i, 3).data().toString();

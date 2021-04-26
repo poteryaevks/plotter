@@ -10,7 +10,7 @@ CustomPlot::CustomPlot()
     : m_plot(new QCustomPlot)
 {
     m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    qDebug() << "create QCustomPlot";
+    qDebug() << "Сreate QCustomPlot";
 }
 
 CustomPlot::~CustomPlot()
@@ -46,6 +46,7 @@ void CustomPlot::clearViewer()
             delete params;
     }
 
+    m_configPlot = {};
     m_graphs.clear();
     m_params.clear();
     m_plot->clearGraphs();
@@ -146,6 +147,11 @@ void CustomPlot::draw()
     repaintPlot();
 }
 
+void CustomPlot::applyParams()
+{
+    repaintPlot();
+}
+
 QCPGraph* CustomPlot::createGraph(PlotParams *params)
 {
     QCPGraph *pgraph = m_plot->addGraph();
@@ -193,15 +199,17 @@ void CustomPlot::updateAxis()
 
 void CustomPlot::repaintPlot()
 {
-//    foreach(QCPGraph* pgraph, graphs) {
-
-//        auto ls = m_params[i]->getLineStyle();
-//        auto sc = m_params[i]->getScatterStyle();
-//        auto color = m_params[i++]->getColor();
-//        pgraph->setLineStyle(ls);
-//        setGraphColor(pgraph, color);
-//        pgraph->setScatterStyle(QCPScatterStyle(sc));
-//    }
+    int i = 0;
+    for (auto pgraph : m_graphs) {
+        if (m_params.size() < i)
+            break;
+        auto ls = m_params.at(i)->getLineStyle();
+        auto sc = m_params.at(i)->getScatterStyle();
+        auto color = m_params.at(i)->getColor();
+        pgraph->setLineStyle(ls);
+        setGraphColor(pgraph, color);
+        pgraph->setScatterStyle(QCPScatterStyle(sc));
+    }
 
     m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
     m_plot->yAxis->setRange(m_configPlot.yAxisMin, m_configPlot.yAxisMax);
@@ -215,5 +223,6 @@ void CustomPlot::setGraphColor(QCPGraph* g, QColor color)
 
     auto pen = g->pen();
     pen.setColor(color);
+    pen.setWidthF(1.5);
     g->setPen(pen);
 }

@@ -12,8 +12,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
     , pfdialog(new functionStringDialog)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 //    ui->customPlotLayout->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -66,7 +66,7 @@ void MainWindow::showParamsPlot()
         ParamsDialog *dialog= new ParamsDialog(&customPlotBuilderPtr->params(), this);
 
         if (dialog->exec() == QDialog::Accepted) {
-//            configurePlot();
+            customPlotBuilderPtr->applyParams();
         }
     }
 }
@@ -120,7 +120,7 @@ void MainWindow::clear()
 QVector<QPair<double, double>> MainWindow::parserLine(const QString& line)
 {
     QVector<QPair<double, double>> data;
-    QStringList list = line.simplified().split(QRegExp("[\\;\\s]+"));       // remove \n, \r and split
+    QStringList list = line.simplified().replace(",", ".").split(QRegExp("[\\;\\s]+"));       // remove \n, \r and split
     int countColData = list.size() / 2;
 
     for (int i = 0; i < countColData; i++)

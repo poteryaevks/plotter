@@ -75,8 +75,13 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
         virtual void draw() = 0;
 
         /*!
+         * \brief updateParams Применить параметры отображения графиков
+         */
+        virtual void applyParams() = 0;
+        /*!
          * \brief params Получить список параметров для графиков
          */
+
         virtual QVector<PlotParams*>& params() = 0;
         static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
 };

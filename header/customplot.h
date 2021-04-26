@@ -35,6 +35,7 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         void yAxisMaxChanged(double value) override;
         void showHideLegend() override;
         void draw() override;
+        void applyParams() override;
 
         QVector<PlotParams*>& params() { return m_params; }
 
