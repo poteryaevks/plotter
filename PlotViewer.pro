@@ -71,8 +71,7 @@ HEADERS += \
 FORMS += \
         ui/mainwindow.ui \
         ui/paramsdialog.ui \
-        ui/functionstringdialog.ui \
-    ui/mainwindow.ui
+        ui/functionstringdialog.ui
 
 DISTFILES +=
 

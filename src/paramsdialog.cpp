@@ -36,8 +36,8 @@ void ParamsDialog::setupModel()
         item = new QStandardItem(m_pdata->at(i)->getPlotName());
         items << item;
 
-        Qt::GlobalColor color = m_pdata->at(i)->getColor();
-        auto color_index = defaultColors.indexOf(color);
+        QColor color = m_pdata->at(i)->getColor();
+        auto color_index = 0;//defaultColors.indexOf(color);
 
         item = new QStandardItem();
         item->setData(color_index, Qt::UserRole);

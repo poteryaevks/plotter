@@ -11,22 +11,25 @@ public:
     explicit PlotParams(QWidget *parent = 0) = delete;
     PlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name = "plot", QWidget *parent = nullptr);
     PlotParams(const PlotParams& params);
-    ~PlotParams();
+    ~PlotParams() {}
 
 public:
-    inline Qt::GlobalColor getColor() const { return m_color; }
+    inline QColor getColor() const { return m_color; }
     inline QCPScatterStyle::ScatterShape getScatterStyle() const { return m_scShape; }
     inline QCPGraph::LineStyle getLineStyle() const { return m_ls; }
     inline QString getPlotName() const { return m_plotName; }
 
-    inline void setColor(Qt::GlobalColor color) { m_color = color; }
+    inline void setColor(QColor color) { m_color = color; }
     inline void setScatterStyle(QCPScatterStyle::ScatterShape scShape) { m_scShape = scShape; }
     inline void setLineStyle(QCPGraph::LineStyle ls) { m_ls = ls; }
     inline void setPlotName(const QString &name) { m_plotName = name; }
 
+    inline bool isCustomColor() { return m_customColor; }
+
 private:
+    bool m_customColor;
     QString m_plotName;
-    Qt::GlobalColor m_color;
+    QColor m_color;
     QCPScatterStyle::ScatterShape m_scShape;
     QCPGraph::LineStyle m_ls;
 };

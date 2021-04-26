@@ -157,7 +157,7 @@ QCPGraph* CustomPlot::createGraph(PlotParams *params)
     QCPGraph *pgraph = m_plot->addGraph();
 
     if (pgraph != nullptr && params != nullptr) {
-        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
+//        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
         pgraph->setLineStyle(params->getLineStyle());
         pgraph->setScatterStyle(QCPScatterStyle(params->getScatterStyle()));
         if (!params->getPlotName().isEmpty())
@@ -200,6 +200,8 @@ void CustomPlot::updateAxis()
 void CustomPlot::repaintPlot()
 {
     int i = 0;
+    QMap<int, QCPGraph*> graphWithGenColor;
+
     for (auto pgraph : m_graphs) {
         if (m_params.size() < i)
             break;
@@ -207,8 +209,27 @@ void CustomPlot::repaintPlot()
         auto sc = m_params.at(i)->getScatterStyle();
         auto color = m_params.at(i)->getColor();
         pgraph->setLineStyle(ls);
-        setGraphColor(pgraph, color);
         pgraph->setScatterStyle(QCPScatterStyle(sc));
+
+        if (m_params.at(i)->isCustomColor()) {
+            setGraphColor(pgraph, color);
+            continue;
+        }
+
+        graphWithGenColor.insert(i, pgraph);
+    }
+
+    QColor colorGen(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256));
+    int n = 0;
+    int redColor = colorGen.red();
+
+    for (auto pgraph : graphWithGenColor) {
+        if (redColor > 255)
+            redColor = redColor - 255;
+        colorGen.setRed(redColor);
+        m_params.at(i)->setColor(colorGen);
+        setGraphColor(pgraph, colorGen);
+        redColor = redColor + (360 / graphWithGenColor.size());
     }
 
     m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
