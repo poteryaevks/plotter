@@ -203,6 +203,10 @@ void CustomPlot::repaintPlot()
     int i = 0;
     QMap<int, QCPGraph*> graphWithGenColor;
 
+    QList<QColor> tempColor = {QColor(0, 128, 255),
+                               QColor(255, 128, 0),
+                               QColor(128, 0, 255)};
+
     for (auto pgraph : m_graphs) {
         if (m_params.size() < i)
             break;
@@ -212,27 +216,31 @@ void CustomPlot::repaintPlot()
         pgraph->setLineStyle(ls);
         pgraph->setScatterStyle(QCPScatterStyle(sc));
 
-        if (m_params.at(i)->isCustomColor()) {
-            setGraphColor(pgraph, color);
-            i++;
-            continue;
-        }
+        // temp
+        setGraphColor(pgraph, tempColor[i]);
+//        if (m_params.at(i)->isCustomColor()) {
+//            setGraphColor(pgraph, color);
+//            i++;
+//            continue;
+//        }
 
         graphWithGenColor.insert(i, pgraph);
         i++;
     }
 
-    QColor colorGen(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256));
-    int redColor = colorGen.red();
+//    QColor colorGen(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256));
+//    QColor colorGen(0, 128, 255);
 
-    for (auto k : graphWithGenColor.keys()) {
-        if (redColor > 255)
-            redColor = redColor - 255;
-        colorGen.setRed(redColor);
-        m_params.at(k)->setColor(colorGen);
-        setGraphColor(graphWithGenColor.value(k), colorGen);
-        redColor = redColor + (360 / graphWithGenColor.size());
-    }
+//    int redColor = colorGen.red();
+
+//    for (auto k : graphWithGenColor.keys()) {
+//        if (redColor > 255)
+//            redColor = redColor - 255;
+//        colorGen.setRed(redColor);
+//        m_params.at(k)->setColor(colorGen);
+//        setGraphColor(graphWithGenColor.value(k), colorGen);
+//        redColor = redColor + (360 / graphWithGenColor.size());
+//    }
 
     m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
     m_plot->yAxis->setRange(m_configPlot.yAxisMin, m_configPlot.yAxisMax);
