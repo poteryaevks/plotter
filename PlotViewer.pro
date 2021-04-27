@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT += printsupport widgets xml sql
-CONFIG += c++11
+CONFIG += c++14
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,7 +21,7 @@ unix: {
 
 VERSION = 1.0.0
 
-CONFIG += debug_and_release build_all
+CONFIG += debug build_all
 
 TARGET = PlotViewer
 TEMPLATE = app
