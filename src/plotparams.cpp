@@ -17,3 +17,9 @@ PlotParams::PlotParams(const PlotParams& params)
     this->setLineStyle(params.getLineStyle());
     this->setScatterStyle(params.getScatterStyle());
 }
+
+void PlotParams::setColor(QColor color)
+{
+    m_customColor = true;
+    m_color = color;
+}

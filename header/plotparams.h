@@ -19,7 +19,7 @@ public:
     inline QCPGraph::LineStyle getLineStyle() const { return m_ls; }
     inline QString getPlotName() const { return m_plotName; }
 
-    inline void setColor(QColor color) { m_color = color; }
+    void setColor(QColor color);
     inline void setScatterStyle(QCPScatterStyle::ScatterShape scShape) { m_scShape = scShape; }
     inline void setLineStyle(QCPGraph::LineStyle ls) { m_ls = ls; }
     inline void setPlotName(const QString &name) { m_plotName = name; }
