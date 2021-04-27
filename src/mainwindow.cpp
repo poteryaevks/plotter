@@ -124,13 +124,8 @@ void MainWindow::clear()
 
 QVector<QPair<double, double>> MainWindow::parseLine(const QString& line)
 {
-<<<<<<< HEAD
     QVector<QPair<double, double>> data;
     QStringList list = line.simplified().replace(",", ".").split(QRegExp("[\\;\\s]+"));       // remove \n, \r and split
-=======
-    QVector<Point> data;
-    QStringList list = line.simplified().split(QRegExp("[\\;\\s]+"));       // remove \n, \r and split
->>>>>>> cf89bcacdee780c3cdef281530ffd37e3d955557
     int countColData = list.size() / 2;
 
     for (int i = 0; i < countColData; i++)

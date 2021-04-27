@@ -214,22 +214,23 @@ void CustomPlot::repaintPlot()
 
         if (m_params.at(i)->isCustomColor()) {
             setGraphColor(pgraph, color);
+            i++;
             continue;
         }
 
         graphWithGenColor.insert(i, pgraph);
+        i++;
     }
 
     QColor colorGen(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256));
-    int n = 0;
     int redColor = colorGen.red();
 
-    for (auto pgraph : graphWithGenColor) {
+    for (auto k : graphWithGenColor.keys()) {
         if (redColor > 255)
             redColor = redColor - 255;
         colorGen.setRed(redColor);
-        m_params.at(i)->setColor(colorGen);
-        setGraphColor(pgraph, colorGen);
+        m_params.at(k)->setColor(colorGen);
+        setGraphColor(graphWithGenColor.value(k), colorGen);
         redColor = redColor + (360 / graphWithGenColor.size());
     }
 

@@ -13,9 +13,10 @@ PlotParams::PlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shap
 
 PlotParams::PlotParams(const PlotParams& params)
 {
-    this->setColor(params.getColor());
-    this->setLineStyle(params.getLineStyle());
-    this->setScatterStyle(params.getScatterStyle());
+    m_customColor = false;
+    m_color = params.getColor();
+    m_ls = params.getLineStyle();
+    m_scShape = params.getScatterStyle();
 }
 
 void PlotParams::setColor(QColor color)
