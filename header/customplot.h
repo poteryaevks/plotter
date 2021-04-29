@@ -38,6 +38,8 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         void applyParams() override;
 
         QVector<PlotParams*>& params() { return m_params; }
+        QColor generateColor(QColor color);
+        QColor hsvToRgb(float h, float s, float v);
 
     private:
         ConfigPlot m_configPlot;

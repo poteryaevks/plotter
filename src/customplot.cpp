@@ -203,10 +203,6 @@ void CustomPlot::repaintPlot()
     int i = 0;
     QMap<int, QCPGraph*> graphWithGenColor;
 
-    QList<QColor> tempColor = {QColor(0, 128, 255),
-                               QColor(255, 128, 0),
-                               QColor(128, 0, 255)};
-
     for (auto pgraph : m_graphs) {
         if (m_params.size() < i)
             break;
@@ -216,31 +212,26 @@ void CustomPlot::repaintPlot()
         pgraph->setLineStyle(ls);
         pgraph->setScatterStyle(QCPScatterStyle(sc));
 
-        // temp
-        setGraphColor(pgraph, tempColor[i]);
-//        if (m_params.at(i)->isCustomColor()) {
-//            setGraphColor(pgraph, color);
-//            i++;
-//            continue;
-//        }
+        if (m_params.at(i)->isCustomColor()) {
+            setGraphColor(pgraph, color);
+            i++;
+            continue;
+        }
 
         graphWithGenColor.insert(i, pgraph);
         i++;
     }
 
-//    QColor colorGen(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256));
-//    QColor colorGen(0, 128, 255);
+    // Set begin color for first graph
+    QColor color = QColor::fromHsv(220, 71, 100);
+    double goldenRatioConjugate = 0.618033988749895;
+    double hue = color.hsvHueF();
 
-//    int redColor = colorGen.red();
-
-//    for (auto k : graphWithGenColor.keys()) {
-//        if (redColor > 255)
-//            redColor = redColor - 255;
-//        colorGen.setRed(redColor);
-//        m_params.at(k)->setColor(colorGen);
-//        setGraphColor(graphWithGenColor.value(k), colorGen);
-//        redColor = redColor + (360 / graphWithGenColor.size());
-//    }
+    for (auto k : graphWithGenColor.keys()) {
+        hue += goldenRatioConjugate;
+        hue = fmod(hue, 1.);
+        setGraphColor(graphWithGenColor.value(k), hsvToRgb(hue, 0.5, 0.95));        // s=0.99, v=0.99; s=0.25, h=0.8; s=0.3, v=0.99
+    }
 
     m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
     m_plot->yAxis->setRange(m_configPlot.yAxisMin, m_configPlot.yAxisMax);
@@ -254,6 +245,71 @@ void CustomPlot::setGraphColor(QCPGraph* g, QColor color)
 
     auto pen = g->pen();
     pen.setColor(color);
-    pen.setWidthF(1.5);
+    pen.setWidthF(3);
     g->setPen(pen);
+}
+
+QColor CustomPlot::hsvToRgb(float h, float s, float v)
+{
+    int h_i = int(h * 6);
+    float f = h * 6 - h_i;
+    float p = v * (1 - s);
+    float q = v * (1 - f * s);
+    float t = v * (1 - (1 - f) * s);
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    switch (h_i) {
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        case 5:
+            r = v;
+            g = p;
+            b = q;
+            break;
+    }
+    return QColor(int(r * 256), int(g * 256), int(b * 256));
+}
+
+QColor CustomPlot::generateColor(QColor color)
+{
+//    int red = QRandomGenerator::global()->bounded(256);
+//    int green = QRandomGenerator::global()->bounded(256);
+//    int blue = QRandomGenerator::global()->bounded(256);
+    int red = 0;
+    int green = 128;
+    int blue = 255;
+
+    // mix the color
+    if (color.isValid()) {
+        red = (red + color.red()) / 2;
+        green = (green + color.green()) / 2;
+        blue = (blue + color.blue()) / 2;
+    }
+
+    return QColor(red, green, blue);
 }
