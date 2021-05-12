@@ -19,8 +19,8 @@ PlotParams::PlotParams(const PlotParams& params)
     m_scShape = params.getScatterStyle();
 }
 
-void PlotParams::setColor(QColor color)
+void PlotParams::setColor(QColor color, bool customColor)
 {
-    m_customColor = true;
+    m_customColor = customColor;
     m_color = color;
 }

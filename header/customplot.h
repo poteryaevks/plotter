@@ -37,7 +37,7 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         void draw() override;
         void applyParams() override;
 
-        QVector<PlotParams*>& params() { return m_params; }
+        QList<PlotParams*>& params() override { return m_params; }
         QColor generateColor(QColor color);
         QColor hsvToRgb(float h, float s, float v);
 
@@ -45,7 +45,7 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         ConfigPlot m_configPlot;
         QCustomPlot *m_plot;
         QVector<QCPGraph*> m_graphs;
-        QVector<PlotParams*> m_params;
+        QList<PlotParams*> m_params;
         QList<GraphValues> m_graphsValues;
 
         QCPGraph* createGraph(PlotParams *params);

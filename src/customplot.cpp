@@ -231,6 +231,9 @@ void CustomPlot::repaintPlot()
         hue += goldenRatioConjugate;
         hue = fmod(hue, 1.);
         setGraphColor(graphWithGenColor.value(k), hsvToRgb(hue, 0.5, 0.95));        // s=0.99, v=0.99; s=0.25, h=0.8; s=0.3, v=0.99
+
+        if (k < m_params.size())
+            m_params[k]->setColor(hsvToRgb(hue, 0.5, 0.95));
     }
 
     m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
@@ -242,7 +245,7 @@ void CustomPlot::setGraphColor(QCPGraph* g, QColor color)
 {
     if (g == nullptr)
         return;
-
+    qDebug() << g << color;
     auto pen = g->pen();
     pen.setColor(color);
     pen.setWidthF(3);

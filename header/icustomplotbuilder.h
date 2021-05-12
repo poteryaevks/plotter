@@ -82,7 +82,7 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
          * \brief params Получить список параметров для графиков
          */
 
-        virtual QVector<PlotParams*>& params() = 0;
+        virtual QList<PlotParams*>& params() = 0;
         static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
 };
 

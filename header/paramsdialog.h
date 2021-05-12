@@ -17,13 +17,13 @@ class ParamsDialog : public QDialog
         Q_OBJECT
 
     public:
-        explicit ParamsDialog(QVector<PlotParams*>* data, QWidget *parent = 0);
+        explicit ParamsDialog(QList<PlotParams*>* data, QWidget *parent = 0);
         ~ParamsDialog();
 
     private:
         void setupModel();
 
-        QVector<PlotParams*>* m_pdata;
+        QList<PlotParams*>* m_pdata;
         Ui::ParamsDialog *ui;
         QStandardItemModel *model;
         ListDelegate *pLsListDel;
@@ -31,6 +31,7 @@ class ParamsDialog : public QDialog
 
     private slots:
         void writeParams();
+        void showColorDialog(int row, int column);
 };
 
 
