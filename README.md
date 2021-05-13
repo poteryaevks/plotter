@@ -16,6 +16,8 @@ if (Instance) {
 if (instance != nullptr) {
     instance->showViewer();
 
+    instance->setTitle(QString("Custom title"));        // Установить заголовок для графиков
+    
     std::vector<std::pair<double, double>> data;        // QVector<QPair<double, double>> data
     // ...
     instance->addValues(data);                          // Добавление данных
