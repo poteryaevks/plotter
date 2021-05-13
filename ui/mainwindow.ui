@@ -124,16 +124,18 @@
      <x>0</x>
      <y>0</y>
      <width>1051</width>
-     <height>32</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Файл</string>
+     <string>File</string>
     </property>
     <addaction name="openAction"/>
     <addaction name="separator"/>
     <addaction name="clearAction"/>
+    <addaction name="separator"/>
+    <addaction name="printAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -148,22 +150,27 @@
   </widget>
   <action name="openAction">
    <property name="text">
-    <string>Открыть файл...</string>
+    <string>Open file...</string>
    </property>
   </action>
   <action name="quitAction">
    <property name="text">
-    <string>Выход</string>
+    <string>Quit</string>
    </property>
   </action>
   <action name="clearAction">
    <property name="text">
-    <string>Очистить</string>
+    <string>Clear</string>
    </property>
   </action>
   <action name="action_function">
    <property name="text">
     <string>Ввод из строки..</string>
+   </property>
+  </action>
+  <action name="printAction">
+   <property name="text">
+    <string>Print...</string>
    </property>
   </action>
  </widget>

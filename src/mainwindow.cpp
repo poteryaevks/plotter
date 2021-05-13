@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cbLegend, SIGNAL(toggled(bool)), this, SLOT(showHideLegend(bool)));
     connect(ui->openAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
     connect(ui->clearAction, SIGNAL(triggered(bool)), this, SLOT(clear()));
+    connect(ui->printAction, SIGNAL(triggered(bool)), this, SLOT(print()));
     connect(ui->quitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
     connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
     connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
@@ -66,9 +67,9 @@ void MainWindow::showContextMenu(QPoint pos)
 void MainWindow::showParamsPlot()
 {
     if (customPlotBuilderPtr != nullptr) {
-        ParamsDialog *dialog= new ParamsDialog(&customPlotBuilderPtr->params(), this);
+        ParamsDialog dialog(&customPlotBuilderPtr->params(), this);
 
-        if (dialog->exec() == QDialog::Accepted) {
+        if (dialog.exec() == QDialog::Accepted) {
             customPlotBuilderPtr->applyParams();
         }
     }
@@ -208,4 +209,22 @@ void MainWindow::loadFile(const QString &fileName)
     for(const auto& graph : graphs)
         customPlotBuilderPtr->addGraph(graph, fileName);
 
+}
+
+void MainWindow::print()
+{
+    QPrinter printer;
+
+
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print Document"));
+
+//    if (editor->textCursor().hasSelection())
+//        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    if (dialog.exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        painter.setWindow(m_graphWidget->rect());
+        m_graphWidget->render(&painter);
+    }
 }

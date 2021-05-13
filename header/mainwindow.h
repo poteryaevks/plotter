@@ -28,7 +28,6 @@ public slots:
     void functionExecute(const QString& expression);
 
 private slots:
-
     void showHideLegend(bool p_onOff);
     void on_Xmin_valueChanged(double xmin);
     void on_Ymin_valueChanged(double ymin);
@@ -38,6 +37,7 @@ private slots:
     void showContextMenu(QPoint);
     void showParamsPlot();
     void openFile();
+    void print();
 
 private:
 
