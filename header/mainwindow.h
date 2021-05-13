@@ -37,7 +37,9 @@ private slots:
     void showContextMenu(QPoint);
     void showParamsPlot();
     void openFile();
-    void print();
+    void showPrint();
+    void showPrintPreview();
+    void print(QPrinter *printer);
 
 private:
 

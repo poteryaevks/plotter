@@ -136,6 +136,7 @@
     <addaction name="clearAction"/>
     <addaction name="separator"/>
     <addaction name="printAction"/>
+    <addaction name="previewAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -171,6 +172,11 @@
   <action name="printAction">
    <property name="text">
     <string>Print...</string>
+   </property>
+  </action>
+  <action name="previewAction">
+   <property name="text">
+    <string>Preview</string>
    </property>
   </action>
  </widget>

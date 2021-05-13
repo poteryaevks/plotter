@@ -35,31 +35,41 @@
     </message>
     <message>
         <location filename="ui/mainwindow.ui" line="132"/>
-        <source>Файл</source>
-        <translation></translation>
+        <source>File</source>
+        <translation>Файл</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="142"/>
+        <location filename="ui/mainwindow.ui" line="154"/>
+        <source>Open file...</source>
+        <translation>Открыть файл...</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="159"/>
+        <source>Quit</source>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="164"/>
+        <source>Clear</source>
+        <translation>Очистить</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="174"/>
+        <source>Print...</source>
+        <translation>Печать...</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="179"/>
+        <source>Preview</source>
+        <translation>Предварительный просмотр</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="145"/>
         <source>Инструменты</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="151"/>
-        <source>Открыть файл...</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/mainwindow.ui" line="156"/>
-        <source>Выход</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/mainwindow.ui" line="161"/>
-        <source>Очистить</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="ui/mainwindow.ui" line="166"/>
+        <location filename="ui/mainwindow.ui" line="169"/>
         <source>Ввод из строки..</source>
         <translation></translation>
     </message>
@@ -72,32 +82,32 @@
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="ui/paramsdialog.ui" line="23"/>
+        <location filename="ui/paramsdialog.ui" line="20"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="ui/paramsdialog.ui" line="43"/>
+        <location filename="ui/paramsdialog.ui" line="40"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="src/paramsdialog.cpp" line="30"/>
+        <location filename="src/paramsdialog.cpp" line="13"/>
         <source>Name</source>
         <translation>Название</translation>
     </message>
     <message>
-        <location filename="src/paramsdialog.cpp" line="30"/>
+        <location filename="src/paramsdialog.cpp" line="13"/>
         <source>Color</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="src/paramsdialog.cpp" line="30"/>
+        <location filename="src/paramsdialog.cpp" line="13"/>
         <source>Line style</source>
         <translation>Стиль линии</translation>
     </message>
     <message>
-        <location filename="src/paramsdialog.cpp" line="30"/>
+        <location filename="src/paramsdialog.cpp" line="13"/>
         <source>Point style</source>
         <translation>Стиль точки</translation>
     </message>

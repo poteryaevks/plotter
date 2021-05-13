@@ -32,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cbLegend, SIGNAL(toggled(bool)), this, SLOT(showHideLegend(bool)));
     connect(ui->openAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
     connect(ui->clearAction, SIGNAL(triggered(bool)), this, SLOT(clear()));
-    connect(ui->printAction, SIGNAL(triggered(bool)), this, SLOT(print()));
+    connect(ui->printAction, SIGNAL(triggered(bool)), this, SLOT(showPrint()));
+    connect(ui->previewAction, SIGNAL(triggered(bool)), this, SLOT(showPrintPreview()));
     connect(ui->quitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
     connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
     connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
@@ -211,19 +212,32 @@ void MainWindow::loadFile(const QString &fileName)
 
 }
 
-void MainWindow::print()
+void MainWindow::showPrintPreview()
 {
-    QPrinter printer;
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageOrientation(QPageLayout::Orientation::Landscape);
+    QPrintPreviewDialog previewDialog(&printer, this);
+    previewDialog.resize(this->size().width() * 0.8, this->size().height() * 0.8);
 
+    connect(&previewDialog, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)));
+    previewDialog.exec();
+}
 
+void MainWindow::showPrint()
+{
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageOrientation(QPageLayout::Orientation::Landscape);
+    QPrintDialog printDialog(&printer, this);
+//    dialog.setWindowTitle(tr("Print Document"));
 
-    QPrintDialog dialog(&printer, this);
-    dialog.setWindowTitle(tr("Print Document"));
+    connect(&printDialog, SIGNAL(accepted(QPrinter*)), SLOT(print(QPrinter*)));
+    printDialog.exec();
+}
 
-//    if (editor->textCursor().hasSelection())
-//        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
-    if (dialog.exec() == QDialog::Accepted) {
-        QPainter painter(&printer);
+void MainWindow::print(QPrinter *printer)
+{
+    if (printer != nullptr) {
+        QPainter painter(printer);
         painter.setWindow(m_graphWidget->rect());
         m_graphWidget->render(&painter);
     }
