@@ -39,29 +39,39 @@
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="154"/>
+        <location filename="ui/mainwindow.ui" line="151"/>
+        <source>Chart</source>
+        <translation>График</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="161"/>
         <source>Open file...</source>
         <translation>Открыть файл...</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="159"/>
+        <location filename="ui/mainwindow.ui" line="166"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="164"/>
+        <location filename="ui/mainwindow.ui" line="171"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="174"/>
+        <location filename="ui/mainwindow.ui" line="181"/>
         <source>Print...</source>
         <translation>Печать...</translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="179"/>
+        <location filename="ui/mainwindow.ui" line="186"/>
         <source>Preview</source>
         <translation>Предварительный просмотр</translation>
+    </message>
+    <message>
+        <location filename="ui/mainwindow.ui" line="191"/>
+        <source>Title...</source>
+        <translation>Заголовок...</translation>
     </message>
     <message>
         <location filename="ui/mainwindow.ui" line="145"/>
@@ -69,9 +79,19 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/mainwindow.ui" line="169"/>
+        <location filename="ui/mainwindow.ui" line="176"/>
         <source>Ввод из строки..</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="src/mainwindow.cpp" line="251"/>
+        <source>Enter title</source>
+        <translation>Введите заголовок</translation>
+    </message>
+    <message>
+        <location filename="src/mainwindow.cpp" line="251"/>
+        <source>Title:</source>
+        <translation>Заголовок:</translation>
     </message>
 </context>
 <context>
