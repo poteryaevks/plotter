@@ -23,6 +23,32 @@ QWidget* CustomPlot::widget()
     return m_plot;
 }
 
+QString CustomPlot::title() const
+{
+    if (m_plot->plotLayout()->rowCount() > 1) {
+        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(m_plot->plotLayout()->element(0, 0));
+        if (titleElement != nullptr)
+            return titleElement->text();
+    }
+
+    return {};
+}
+
+void CustomPlot::setTitle(const QString &title)
+{
+    if (m_plot->plotLayout()->rowCount() == 1) {
+        m_plot->plotLayout()->insertRow(0);
+        m_plot->plotLayout()->addElement(0, 0, new QCPTextElement(m_plot, title, QFont("sans", 12, QFont::Bold)));
+    }
+    else {
+        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(m_plot->plotLayout()->element(0, 0));
+        if (titleElement != nullptr)
+            titleElement->setText(title);
+    }
+
+    repaintPlot();
+}
+
 void CustomPlot::showViewer()
 {
     if (m_plot != nullptr) {

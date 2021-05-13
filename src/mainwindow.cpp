@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->printAction, SIGNAL(triggered(bool)), this, SLOT(showPrint()));
     connect(ui->previewAction, SIGNAL(triggered(bool)), this, SLOT(showPrintPreview()));
     connect(ui->quitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
+    connect(ui->titleChartAction, SIGNAL(triggered(bool)), this, SLOT(setTitleChart()));
     connect(pfdialog, SIGNAL(sendString(const QString&)), this, SLOT(functionExecute(const QString&)));
     connect(ui->action_function, SIGNAL(triggered(bool)), pfdialog, SLOT(show()));
     connect(m_graphWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
@@ -241,4 +242,16 @@ void MainWindow::print(QPrinter *printer)
         painter.setWindow(m_graphWidget->rect());
         m_graphWidget->render(&painter);
     }
+}
+
+void MainWindow::setTitleChart()
+{
+    QString title = customPlotBuilderPtr->title();
+
+    title = QInputDialog::getText(this, tr("Enter title"), tr("Title:"), QLineEdit::Normal, title);
+
+    if (title.isEmpty())
+        return;
+
+    customPlotBuilderPtr->setTitle(title);
 }

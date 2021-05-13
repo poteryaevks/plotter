@@ -21,6 +21,16 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
         virtual QWidget* widget() = 0;
 
         /*!
+         * \brief title Заголовок графиков
+         * \return
+         */
+        virtual QString title() const = 0;
+        /*!
+         * \brief setTitle Установить заголовок для графиков
+         * \param title название заголовка
+         */
+        virtual void setTitle(const QString &title) = 0;
+        /*!
          * \brief showViewer Отображение виджета для вывода графиков
          */
         virtual void showViewer() = 0;

@@ -23,6 +23,8 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         ~CustomPlot();
 
         QWidget* widget() override;
+        QString title() const override;
+        void setTitle(const QString &title) override;
         void showViewer() override;
         void clearViewer() override;
         void addValues(const QVector<QPair<double, double>> &values) override;

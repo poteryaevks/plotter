@@ -40,6 +40,7 @@ private slots:
     void showPrint();
     void showPrintPreview();
     void print(QPrinter *printer);
+    void setTitleChart();
 
 private:
 
