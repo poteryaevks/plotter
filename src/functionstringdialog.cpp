@@ -8,7 +8,9 @@ functionStringDialog::functionStringDialog(QWidget *parent) :
     ui(new Ui::functionStringDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/graph.png"));
+
+    setWindowIcon(QIcon(":/graph.png"));
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 functionStringDialog::~functionStringDialog()

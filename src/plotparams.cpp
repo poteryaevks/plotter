@@ -1,26 +1,26 @@
 #include "plotparams.h"
 
-plotParams::plotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name, QWidget *parent)
+PlotParams::PlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name, QWidget *parent)
     : QObject(parent)
-     ,m_color(color)
-     ,m_scShape(shape)
-     ,m_ls(ls)
-     ,m_plotName(name)
+    ,m_customColor(false)
+    ,m_plotName(name)
+    ,m_color(color)
+    ,m_scShape(shape)
+    ,m_ls(ls)
 {
 
 }
 
-plotParams::plotParams(const plotParams& params)
+PlotParams::PlotParams(const PlotParams& params)
 {
-    auto color = params.getColor();
-    auto ls = params.getLineStyle();
-    auto sc_style = params.getScatterStyle();
-    this->setColor(color);
-    this->setLineStyle(ls);
-    this->setScatterStyle(sc_style);
+    m_customColor = false;
+    m_color = params.getColor();
+    m_ls = params.getLineStyle();
+    m_scShape = params.getScatterStyle();
 }
 
-plotParams::~plotParams()
+void PlotParams::setColor(QColor color, bool customColor)
 {
-
+    m_customColor = customColor;
+    m_color = color;
 }

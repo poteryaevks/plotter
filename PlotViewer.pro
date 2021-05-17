@@ -5,11 +5,28 @@
 #-------------------------------------------------
 
 QT += printsupport widgets xml sql
+CONFIG += c++14
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+unix: {
+        CONFIG (debug, debug|release) {
+                TARGET = PlotViewerd
+        } else {
+                TARGET = PlotViewer
+        }
+} else {
+        TARGET = $$qtLibraryTarget(PlotViewer)
+}
+
+VERSION = 1.0.0
+
+CONFIG += debug build_all
+
 TARGET = PlotViewer
 TEMPLATE = app
+
+DEFINES += Library_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -26,34 +43,38 @@ INCLUDEPATH += header
 
 SOURCES += \
         src/main.cpp \
-        src/mainwindow.cpp \
         src/qcustomplot.cpp \
-        src/plot_gui.cpp \
         src/calc.cpp \
         src/plotparams.cpp \
         src/paramsdialog.cpp \
         src/comboboxdelegate.cpp \
-        src/base.cpp \
-        src/functionstringdialog.cpp
+        src/functionstringdialog.cpp \
+        src/mainwindow.cpp \
+        src/ibasegraphbuilder.cpp \
+        src/icustomplotbuilder.cpp \
+        src/customplot.cpp
 
 HEADERS += \
-    header/mainwindow.h \
-    header/qcustomplot.h \
-    header/plot_gui.h \
-    header/calc.h \
-    header/plotparams.h \
-    header/paramsdialog.h \
-    header/comboboxdelegate.h \
-    header/base.h \
-    header/functionstringdialog.h
+        header/qcustomplot.h \
+        header/calc.h \
+        header/plotparams.h \
+        header/paramsdialog.h \
+        header/comboboxdelegate.h \
+        header/base.h \
+        header/functionstringdialog.h \
+        header/mainwindow.h \
+        header/ibasegraphbuilder.h \
+        header/icustomplotbuilder.h \
+        header/customplot.h \
+    header/libraryglobal.h
 
 FORMS += \
-    ui/mainwindow.ui \
-    ui/plot_gui.ui \
-    ui/paramsdialog.ui \
-    ui/functionstringdialog.ui
+        ui/mainwindow.ui \
+        ui/paramsdialog.ui \
+        ui/functionstringdialog.ui
 
 DISTFILES +=
 
-RESOURCES += \
-    res/res.qrc
+RESOURCES += res.qrc
+
+TRANSLATIONS += PlotViewer_ru.ts

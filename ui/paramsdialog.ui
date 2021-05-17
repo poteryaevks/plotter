@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>paramsDialog</class>
- <widget class="QDialog" name="paramsDialog">
+ <class>ParamsDialog</class>
+ <widget class="QDialog" name="ParamsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,16 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Parameters</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="3">
-    <widget class="QTableView" name="tableView"/>
-   </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="replot">
+    <widget class="QPushButton" name="applyButton">
      <property name="text">
-      <string>Replot</string>
+      <string>Apply</string>
      </property>
     </widget>
    </item>
@@ -38,14 +35,34 @@
     </spacer>
    </item>
    <item row="1" column="2">
-    <widget class="QPushButton" name="Cancel">
+    <widget class="QPushButton" name="cancelButton">
      <property name="text">
-      <string>Exit</string>
+      <string>Cancel</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QTableWidget" name="tableWidget"/>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ParamsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>346</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

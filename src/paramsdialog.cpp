@@ -2,93 +2,77 @@
 #include "ui_paramsdialog.h"
 #include "base.h"
 
-
-paramsDialog::paramsDialog(QVector<plotParams*>* data, QWidget *parent) :
+ParamsDialog::ParamsDialog(QList<PlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
-    ui(new Ui::paramsDialog),
-    pcolorDel(new ColorDelegate)
+    ui(new Ui::ParamsDialog)
 {
     ui->setupUi(this);
 
-    QList<QString> list = defaultLs.keys();
-    pLsListDel = new ListDelegate(list);
-    //
-    list = defaultScatters.keys();
-    pScListDel = new ListDelegate(list);
-    installEventFilter(this);
+    ui->tableWidget->setColumnCount(4);
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Color") << tr("Line style") << tr("Point style"));
+    setupModel();
+//    ui->tableWidget->setModel(model);
+
+//    ui->tableWidget->setItemDelegateForColumn(1, new ColorDelegate(defaultColors, this));
+    ui->tableWidget->setItemDelegateForColumn(2, new ListDelegate(defaultLs.keys(), this));
+    ui->tableWidget->setItemDelegateForColumn(3, new ListDelegate(defaultScatters.keys(), this));
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    connect(ui->applyButton, &QPushButton::clicked, this, &ParamsDialog::writeParams);
+    connect(ui->applyButton, &QPushButton::clicked, this, &ParamsDialog::accept);
+    connect(ui->tableWidget, &QTableWidget::cellClicked, this, &ParamsDialog::showColorDialog);
 }
 
-
-paramsDialog::~paramsDialog()
+ParamsDialog::~ParamsDialog()
 {
     delete ui;
 }
 
-bool paramsDialog::eventFilter(QObject */*object*/, QEvent *event)
+void ParamsDialog::setupModel()
 {
-    if(m_pdata->isEmpty())
-        return false;
-    if(event->type() == QEvent::Show) {
-        setupModel();
-        ui->tableView->setModel(model);
-        ui->tableView->setItemDelegateForColumn(1, pcolorDel);
-        ui->tableView->setItemDelegateForColumn(2, pLsListDel);
-        ui->tableView->setItemDelegateForColumn(3, pScListDel);
-    }
-    if(event->type() == QEvent::Hide) {
-        clearModel();
-    }
-    return false;
-}
+//    model = new QStandardItemModel(this);
+//    model->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Color") << tr("Line style") << tr("Point style"));
+//    QStandardItem *item = nullptr;
 
+    for(int i = 0; i < m_pdata->size(); ++i) {
+        int numRow = ui->tableWidget->rowCount();
+        ui->tableWidget->insertRow(numRow);
+        ui->tableWidget->setItem(numRow, 0, new QTableWidgetItem(m_pdata->at(i)->getPlotName()));
 
-void paramsDialog::setupModel()
-{
-    auto row_number = m_pdata->size();
-    model = new QStandardItemModel(row_number, COLUMNS_NUM, this);
-    model->setHeaderData(0, Qt::Horizontal, tr("Name"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Color"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Line style"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Point style"));
-    //
-    for(std::size_t i {0}; i < model->rowCount(); ++i) {
-        Qt::GlobalColor color = m_pdata->at(i)->getColor();
-        auto color_index = defaultColors.indexOf(color);
-        //
+        QTableWidgetItem *itemColor = new QTableWidgetItem;
+        itemColor->setBackgroundColor(m_pdata->at(i)->getColor());
+        ui->tableWidget->setItem(numRow, 1, itemColor);
+
         auto ls_index = m_pdata->at(i)->getLineStyle();
-        auto ls_name = defaultLs.key(ls_index);
-        //
+//        item = new QStandardItem(defaultLs.key(ls_index));
+        ui->tableWidget->setItem(numRow, 2, new QTableWidgetItem(defaultLs.key(ls_index)));
+
         auto sc_index = m_pdata->at(i)->getScatterStyle();
-        auto sc_name = defaultScatters.key(sc_index);
-        //
-        model->setData(model->index(i, 0, QModelIndex()), m_pdata->at(i)->getPlotName());
-        model->setData(model->index(i, 1, QModelIndex()), color_index);
-        model->setData(model->index(i, 2, QModelIndex()), ls_name);
-        model->setData(model->index(i, 3, QModelIndex()), sc_name);
+//        item = new QStandardItem(defaultScatters.key(sc_index));
+        ui->tableWidget->setItem(numRow, 3, new QTableWidgetItem(defaultScatters.key(sc_index)));
     }
 }
 
-void paramsDialog::clearModel()
+void ParamsDialog::writeParams()
 {
-    delete model;
-}
+    int i = 0;
 
-void paramsDialog::on_replot_released()
-{
-    auto it = (*m_pdata).begin();
-    for(std::size_t i { 0 }; it != (*m_pdata).end(); ++it, ++i) {
-        auto color_index = model->index(i, 1).data().toInt();
-        auto ls = model->index(i, 2).data().toString();
-        auto cs_style = model->index(i, 3).data().toString();
-        (*it)->setColor(defaultColors[color_index]);
+    for (auto it = (*m_pdata).begin(); it != (*m_pdata).end(); ++it) {
+        auto ls = ui->tableWidget->item(i, 2)->text();
+        auto cs_style = ui->tableWidget->item(i, 3)->text();
+        (*it)->setColor(ui->tableWidget->item(i, 1)->backgroundColor(), true);
         (*it)->setLineStyle(defaultLs[ls]);
         (*it)->setScatterStyle(defaultScatters[cs_style]);
+        ++i;
     }
-    emit replot();
 }
 
-void paramsDialog::on_Cancel_released()
+void ParamsDialog::showColorDialog(int row, int column)
 {
-    accept();
+    if (column == 1) {
+        QColorDialog *colorDialog = new QColorDialog(this);
+        if (colorDialog->exec() == QDialog::Accepted)
+            ui->tableWidget->item(row, column)->setBackgroundColor(colorDialog->selectedColor());
+    }
 }

@@ -10,7 +10,6 @@
 
 Calculator::Calculator()
     : nCurrentIndex(0),
-      nNumberOfOperators(0),
       expression(std::string())
 {
     setlocale(LC_ALL, "Russian");
@@ -329,6 +328,7 @@ double Calculator::RPNcalc()
             return dRPNValue[0];
         }
     }
+    return 0;
 }
 
 void Calculator::AddOperator(char *s)
@@ -423,7 +423,7 @@ void Calculator::SimbStackExec(char *s)  //добавить символ или 
     case ')':
         //выгрузить последний символ из SimbolStack в RPNStack
         //и удалить последние 2 символа из SimbolStack
-        for (size_t i = 0; i < NumToLoad.top() - 1; i++) {
+        for (int i = 0; i < NumToLoad.top() - 1; i++) {
             char *temp = SimbolStack.top();
             RPNStack.push_back(temp);
             SimbolStack.pop();
@@ -494,7 +494,6 @@ bool Calculator::RPNbuilder(char *s)
 char *Calculator::ExtractStr(char *s, int offset)
 {
     int size;
-    bool rec = false;
     int index = 0;
     size = offset;
     if (size < 0)
@@ -502,7 +501,7 @@ char *Calculator::ExtractStr(char *s, int offset)
 
     char *temp = new char[size + 1];  //                              <---------------------------------------------
     cleaner.push_back(temp);
-    for (size_t i = 0; i < offset; i++) {
+    for (int i = 0; i < offset; i++) {
         temp[index] = s[i];
         index++;
     }
