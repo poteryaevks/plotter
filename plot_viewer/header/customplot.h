@@ -2,10 +2,12 @@
 #define CUSTOMPLOT_H
 
 #include "icustomplotbuilder.h"
-#include "qcustomplot.h"
 #include "plotparams.h"
 #include "libraryglobal.h"
+
 #include <QWidget>
+
+class QCustomPlot;
 
 struct ConfigPlot {
         double xAxisMax;
@@ -16,11 +18,13 @@ struct ConfigPlot {
 
 using GraphValues = QVector<QPair<double, double>>;
 
-class Library_EXPORT CustomPlot : public ICustomPlotBuilder
+class Library_EXPORT PvPlot final : public IPlot
 {
+    using CustomPlotPtr = std::unique_ptr<QCustomPlot>;
+
     public:
-        CustomPlot();
-        ~CustomPlot();
+        PvPlot();
+        ~PvPlot();
 
         QWidget* widget() override;
         QString title() const override;
@@ -39,18 +43,18 @@ class Library_EXPORT CustomPlot : public ICustomPlotBuilder
         void draw() override;
         void applyParams() override;
 
-        QList<PlotParams*>& params() override { return m_params; }
+        QList<PvPlotParams*>& params() override { return m_params; }
         QColor generateColor(QColor color);
         QColor hsvToRgb(float h, float s, float v);
 
     private:
         ConfigPlot m_configPlot;
-        QCustomPlot *m_plot;
+        CustomPlotPtr m_plot;
         QVector<QCPGraph*> m_graphs;
-        QList<PlotParams*> m_params;
+        QList<PvPlotParams*> m_params;
         QList<GraphValues> m_graphsValues;
 
-        QCPGraph* createGraph(PlotParams *params);
+        QCPGraph* createGraph(PvPlotParams *params);
         void updateAxis();
         void repaintPlot();
         void setGraphColor(QCPGraph* g, QColor color);

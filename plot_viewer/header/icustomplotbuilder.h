@@ -5,17 +5,17 @@
 #include <memory>
 #include <QWidget>
 
-class PlotParams;
-class ICustomPlotBuilder;
-using CustomPlotBuilderPtr = std::shared_ptr<ICustomPlotBuilder>;
+class PvPlotParams;
+class IPlot;
+using CustomPlotBuilderPtr = std::shared_ptr<IPlot>;
 
 /*!
  * \brief The ICustomPlotBuilder class Интерфейсный класс для взаимодей с QCustomPlot
  */
-class ICustomPlotBuilder : public IBaseGraphBuilder
+class IPlot : public IBaseGraphBuilder
 {
     protected:
-        virtual ~ICustomPlotBuilder() = default;
+        virtual ~IPlot() = default;
 
     public:
         virtual QWidget* widget() = 0;
@@ -92,7 +92,7 @@ class ICustomPlotBuilder : public IBaseGraphBuilder
          * \brief params Получить список параметров для графиков
          */
 
-        virtual QList<PlotParams*>& params() = 0;
+        virtual QList<PvPlotParams*>& params() = 0;
         static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
 };
 

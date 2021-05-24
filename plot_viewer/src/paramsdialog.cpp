@@ -2,7 +2,7 @@
 #include "ui_paramsdialog.h"
 #include "base.h"
 
-ParamsDialog::ParamsDialog(QList<PlotParams*>* data, QWidget *parent) :
+ParamsDialog::ParamsDialog(QList<PvPlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
     ui(new Ui::ParamsDialog)

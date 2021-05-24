@@ -1,26 +1,42 @@
+#include "PvLineCalculator.h"
+
 #include <algorithm>
 #include <assert.h>
-#include <string>
-#include <string>
 #include <sstream>
-#include "calc.h"
-
-#include <stack>
 #include <functional>
 
-Calculator::Calculator()
+namespace {
+
+/* Значения, возвращаемые функцией parse */
+enum eCalcEnum {
+    VAL =  0  /* В стек занесено новое значение */
+    ,ADD =  1  /* Сложение */
+    ,SUB =  2  /* Вычитание */
+    ,MUL =  3  /* Умножение */
+    ,DIV =  4  /* Деление */
+    ,DEG =  5  /* Возведение в степень */
+    ,SOF = -1  /* Переполнение стека */
+    ,SUF = -2  /* В стеке недостаточно операндов */
+    ,UNK = -3  /* Неопознанное значение */
+    ,END = -4
+};
+
+}
+
+
+PvLineCalculator::PvLineCalculator()
     : nCurrentIndex(0),
       expression(std::string())
 {
     setlocale(LC_ALL, "Russian");
 }
 
-Calculator::~Calculator()
+PvLineCalculator::~PvLineCalculator()
 {
 
 }
 
-double Calculator::Calc(const std::string &str)
+double PvLineCalculator::calculate(const std::string &str)
 {
     expression = str;
     std::remove_if(expression.begin(), expression.end(), [](char ch){
@@ -46,19 +62,19 @@ double Calculator::Calc(const std::string &str)
 
     cleaner.clear();
     RPNStack.clear();
-    SimbolStack = stack<char*>();
-    NumToLoad = stack<int>();
+    SimbolStack = std::stack<char*>();
+    NumToLoad = std::stack<int>();
 
     return res;
 }
 
-bool Calculator::isNenegativeNumber(char* s)
+bool PvLineCalculator::isNenegativeNumber(char* s)
 {
     return (*s == '-'
             && *(s + 1) != '\0');
 }
 
-bool Calculator::isCharAllowed(char s)
+bool PvLineCalculator::isCharAllowed(char s)
 {
     return (isSymbol(s)
             || isdigit((int)s)
@@ -66,7 +82,7 @@ bool Calculator::isCharAllowed(char s)
 }
 
 
-bool Calculator::isOperator(char s)
+bool PvLineCalculator::isOperator(char s)
 {
     return (s == 0x2A
             || s == 0x2B
@@ -75,7 +91,7 @@ bool Calculator::isOperator(char s)
             || s == 0x5E); // ^ - степень
 }
 
-bool Calculator::isDotNumber(char s)
+bool PvLineCalculator::isDotNumber(char s)
 {
     return (isdigit((int)s)
             || isDot(s));
@@ -83,7 +99,7 @@ bool Calculator::isDotNumber(char s)
 }
 
 
-bool Calculator::isSymbol(char s)
+bool PvLineCalculator::isSymbol(char s)
 {
     return (s == 0x28
             ||s == 0x29
@@ -91,7 +107,7 @@ bool Calculator::isSymbol(char s)
             || s == 0x2E);
 }
 
-bool Calculator::TwoNeighborChars(std::string ::iterator &it)
+bool PvLineCalculator::TwoNeighborChars(std::string ::iterator &it)
 {
     bool f1(false), f2(false), f3(false);
 
@@ -107,13 +123,13 @@ bool Calculator::TwoNeighborChars(std::string ::iterator &it)
     return (f1 || f2 || f3);
 }
 
-bool Calculator::isDot(char s)
+bool PvLineCalculator::isDot(char s)
 {
     return (s == 0x2C
             || s == 0x2E);
 }
 
-bool Calculator::isDotCorrect(std::string ::iterator &it)
+bool PvLineCalculator::isDotCorrect(std::string ::iterator &it)
 {
     bool f1(true), f2(true);
     if(it != expression.begin()) {
@@ -127,7 +143,7 @@ bool Calculator::isDotCorrect(std::string ::iterator &it)
     return (f1 && f2);
 }
 
-bool Calculator::NumberOfHooksCorrect()
+bool PvLineCalculator::NumberOfHooksCorrect()
 {
     auto rHookNum = std::count(expression.begin(), expression.end(), '(');
     auto lHookNum = std::count(expression.begin(), expression.end(), ')');
@@ -135,23 +151,23 @@ bool Calculator::NumberOfHooksCorrect()
 }
 
 
-bool Calculator::isNewLine(char s)
+bool PvLineCalculator::isNewLine(char s)
 {
     return (s == 0x28);
 }
 
 
-bool Calculator::isHook(char s)
+bool PvLineCalculator::isHook(char s)
 {
     return (s == 0x28 || s == 0x29);
 }
 
-bool Calculator::isMinus(char s)
+bool PvLineCalculator::isMinus(char s)
 {
     return (s == '-');
 }
 
-void Calculator::isExpressionCorrect()
+void PvLineCalculator::isExpressionCorrect()
 {
     int nNumberOfDots { 0 }; //колличество точек у числа
 
@@ -203,7 +219,7 @@ void Calculator::isExpressionCorrect()
 
 
 
-int Calculator::RPNparse(char* s)
+int PvLineCalculator::RPNparse(char* s)
 {
     /* Распознаем знаки арифметических операций */
     switch (*s) {
@@ -267,7 +283,7 @@ int Calculator::RPNparse(char* s)
 
     /* Проверяем, есть ли свободное место в стеке
      * и сохраняем в нем операнд, иначе возвращаем ошибку переполнения */
-    if (nCurrentIndex < STKDPTH)
+    if (nCurrentIndex < STACK_DEPTH)
         dRPNValue[nCurrentIndex++] = temp;
     else
         return SOF;
@@ -275,7 +291,7 @@ int Calculator::RPNparse(char* s)
     return VAL;
 }
 
-double Calculator::RPNcalc()
+double PvLineCalculator::RPNcalc()
 {
     /* Организуем цикл для перебора аргументов командной строки */
     for(auto str : RPNStack) {
@@ -331,7 +347,7 @@ double Calculator::RPNcalc()
     return 0;
 }
 
-void Calculator::AddOperator(char *s)
+void PvLineCalculator::AddOperator(char *s)
 {
     if (SimbolStack.size() == 0) {
         SimbolStack.push(s);
@@ -392,7 +408,7 @@ void Calculator::AddOperator(char *s)
 }
 
 
-void Calculator::SimbStackExec(char *s)  //добавить символ или выгрузки
+void PvLineCalculator::SimbStackExec(char *s)  //добавить символ или выгрузки
 {
     switch (*s) {
     case '+':
@@ -438,7 +454,7 @@ void Calculator::SimbStackExec(char *s)  //добавить символ или 
 
 
 //принимает строку - выражение, которое прошло проверку
-bool Calculator::RPNbuilder(char *s)
+bool PvLineCalculator::RPNbuilder(char *s)
 {
     int nPPSize;
     bool bNewSubExpression = true; //признак нового выражения (начало или скобки)
@@ -480,7 +496,7 @@ bool Calculator::RPNbuilder(char *s)
         }
     } while (*s);
 
-    for (size_t i = 0; i < NumToLoad.top(); i++){
+    for (int i = 0; i < NumToLoad.top(); i++){
         char *temp = SimbolStack.top();
         RPNStack.push_back(temp);
         SimbolStack.pop();
@@ -491,7 +507,7 @@ bool Calculator::RPNbuilder(char *s)
 }
 
 
-char *Calculator::ExtractStr(char *s, int offset)
+char *PvLineCalculator::ExtractStr(char *s, int offset)
 {
     int size;
     int index = 0;
@@ -510,7 +526,7 @@ char *Calculator::ExtractStr(char *s, int offset)
     return temp;
 }
 
-void Calculator::ConsiderNumber(char *s, int *pnSize) //пишем в память по указателю размер найденного числа pnSize
+void PvLineCalculator::ConsiderNumber(char *s, int *pnSize) //пишем в память по указателю размер найденного числа pnSize
 {
     *pnSize = 0;
     bool flag = true;

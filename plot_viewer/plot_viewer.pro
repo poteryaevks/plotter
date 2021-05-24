@@ -26,6 +26,8 @@ CONFIG += debug build_all
 TARGET = PlotViewer
 TEMPLATE = app
 
+INCLUDEPATH += $$PWD/../
+
 DEFINES += Library_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
@@ -42,9 +44,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += header
 
 SOURCES += \
-        src/main.cpp \
         src/qcustomplot.cpp \
-        src/calc.cpp \
+        src/main.cpp \
+        src/PvLineCalculator.cpp \
         src/plotparams.cpp \
         src/paramsdialog.cpp \
         src/comboboxdelegate.cpp \
@@ -52,11 +54,14 @@ SOURCES += \
         src/mainwindow.cpp \
         src/ibasegraphbuilder.cpp \
         src/icustomplotbuilder.cpp \
-        src/customplot.cpp
+        src/customplot.cpp \
+
 
 HEADERS += \
         header/qcustomplot.h \
-        header/calc.h \
+        header/common_types.h \
+        header/pv_parsers.h \
+        header/PvLineCalculator.h \
         header/plotparams.h \
         header/paramsdialog.h \
         header/comboboxdelegate.h \
@@ -66,7 +71,7 @@ HEADERS += \
         header/ibasegraphbuilder.h \
         header/icustomplotbuilder.h \
         header/customplot.h \
-    header/libraryglobal.h
+        header/libraryglobal.h
 
 FORMS += \
         ui/mainwindow.ui \
@@ -77,4 +82,7 @@ DISTFILES +=
 
 RESOURCES += res.qrc
 
-TRANSLATIONS += PlotViewer_ru.ts
+TRANSLATIONS += plot_viewer_ru.ts
+
+
+

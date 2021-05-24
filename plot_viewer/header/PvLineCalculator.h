@@ -1,44 +1,45 @@
 #pragma once
 
 #include <iostream>
-#include <errno.h>
-#include <stdio.h>
 #include <string>
 #include <stack>
 #include <vector>
+
 #include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
 #include <math.h>
 
-using namespace std;
 
-#define STKDPTH 320 /* Глубина стека */
-#define SIMB_SIZE  1
-
-/* Значения, возвращаемые функцией parse */
-enum eCalcEnum {
-    VAL =  0  /* В стек занесено новое значение */
-    ,ADD =  1  /* Сложение */
-    ,SUB =  2  /* Вычитание */
-    ,MUL =  3  /* Умножение */
-    ,DIV =  4  /* Деление */
-    ,DEG =  5  /* Возведение в степень */
-    ,SOF = -1  /* Переполнение стека */
-    ,SUF = -2  /* В стеке недостаточно операндов */
-    ,UNK = -3  /* Неопознанное значение */
-    ,END = -4
-};
-
-
-class Calculator
+//!
+//! \brief The PvLineCalculator class
+//!
+class PvLineCalculator
 {
-public:
-    Calculator();
-    virtual ~Calculator();
 
 public:
-    double Calc(const std::string &str);
+
+    //!
+    //! \brief PvLineCalculator
+    //!
+    PvLineCalculator();
+
+    virtual ~PvLineCalculator();
+
+public:
+
+    //!
+    //! \brief calculate
+    //! \param str
+    //! \return
+    //!
+    double calculate(const std::string &str);
 
 private:
+
+    static constexpr int STACK_DEPTH { 320 }; // Глубина стека
+    static constexpr int SIMB_SIZE {1};
+
     //правила формирования выражения
     bool isNenegativeNumber(char* s);
     void isExpressionCorrect(); //проверка на правильность записи мат. выражения
@@ -63,11 +64,11 @@ private:
     void AddOperator(char *s);
     //
     int nCurrentIndex;
-    double dRPNValue[STKDPTH];
+    double dRPNValue[STACK_DEPTH];
     std::string expression;
     std::stack<char*> SimbolStack;  //не может содержать более 1 оператора
     std::vector<char*>  RPNStack;
     std::stack<int>  NumToLoad;
-    vector<char*> cleaner;
+    std::vector<char*> cleaner;
 };
 

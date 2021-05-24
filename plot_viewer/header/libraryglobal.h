@@ -10,6 +10,6 @@
 #  define Library_EXPORT Q_DECL_IMPORT
 #endif
 
-class CustomPlot;
+class PvPlot;
 
 #endif // LIBRARYGLOBAL_H

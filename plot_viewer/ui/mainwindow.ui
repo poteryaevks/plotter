@@ -124,7 +124,7 @@
      <x>0</x>
      <y>0</y>
      <width>1051</width>
-     <height>23</height>
+     <height>41</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -142,9 +142,10 @@
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
-     <string>Инструменты</string>
+     <string>Options</string>
     </property>
     <addaction name="action_function"/>
+    <addaction name="actionSet_parser"/>
    </widget>
    <widget class="QMenu" name="menuChart">
     <property name="title">
@@ -153,8 +154,8 @@
     <addaction name="titleChartAction"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menu_2"/>
    <addaction name="menuChart"/>
+   <addaction name="menu_2"/>
   </widget>
   <action name="openAction">
    <property name="text">
@@ -173,7 +174,7 @@
   </action>
   <action name="action_function">
    <property name="text">
-    <string>Ввод из строки..</string>
+    <string>Set expression...</string>
    </property>
   </action>
   <action name="printAction">
@@ -189,6 +190,11 @@
   <action name="titleChartAction">
    <property name="text">
     <string>Title...</string>
+   </property>
+  </action>
+  <action name="actionSet_parser">
+   <property name="text">
+    <string>Set parser...</string>
    </property>
   </action>
  </widget>

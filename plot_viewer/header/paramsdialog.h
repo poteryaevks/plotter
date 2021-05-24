@@ -17,13 +17,13 @@ class ParamsDialog : public QDialog
         Q_OBJECT
 
     public:
-        explicit ParamsDialog(QList<PlotParams*>* data, QWidget *parent = 0);
+        explicit ParamsDialog(QList<PvPlotParams*>* data, QWidget *parent = 0);
         ~ParamsDialog();
 
     private:
         void setupModel();
 
-        QList<PlotParams*>* m_pdata;
+        QList<PvPlotParams*>* m_pdata;
         Ui::ParamsDialog *ui;
         QStandardItemModel *model;
         ListDelegate *pLsListDel;
