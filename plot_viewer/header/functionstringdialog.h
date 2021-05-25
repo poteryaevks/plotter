@@ -7,12 +7,12 @@ namespace Ui {
 class functionStringDialog;
 }
 
-class functionStringDialog : public QDialog
+class FunctionStringDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit functionStringDialog(QWidget *parent = 0);
-    ~functionStringDialog();
+    explicit FunctionStringDialog(QWidget *parent = 0);
+    ~FunctionStringDialog();
 
 signals:
     void sendString(const QString& expression);

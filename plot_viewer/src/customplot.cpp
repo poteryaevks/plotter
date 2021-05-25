@@ -21,7 +21,6 @@ PvPlot::PvPlot()
 PvPlot::~PvPlot()
 {
 
-
 }
 
 QWidget* PvPlot::widget()
@@ -93,7 +92,7 @@ void PvPlot::addValues(const QVector<QPair<double, double>> &values)
 
 void PvPlot::addValues(const std::vector<std::pair<double, double>> &values)
 {
-    GraphValues graphValues;
+    Graph graphValues;
 
     for (auto v : values)
         graphValues.append(qMakePair(v.first, v.second));
@@ -125,6 +124,35 @@ void PvPlot::addGraph(const Graph &values, const QString &nameGraph)
         updateAxis();
         repaintPlot();
     }
+}
+
+void PvPlot::addGraph(Graph &&values, QString &&nameGraph)
+{
+//    PvPlotParams *params = new PvPlotParams(defaultParams);
+
+//    params->setPlotName(
+//                std::move(nameGraph)
+//                );
+
+//    QCPGraph* graph = createGraph(params);
+
+//    if (graph != nullptr) {
+//        m_graphsValues.append(values);
+
+//        QVector<double> xValues;
+//        QVector<double> yValues;
+
+//        for (auto pointValue : values) {
+//            xValues << pointValue.first;
+//            yValues << pointValue.second;
+//        }
+
+//        graph->setData(xValues, yValues);
+//        m_graphs << graph;
+//        m_params << params;
+//        updateAxis();
+//        repaintPlot();
+//    }
 }
 
 void PvPlot::xAxisMinChanged(double value)
@@ -190,14 +218,17 @@ QCPGraph* PvPlot::createGraph(PvPlotParams *params)
     QCPGraph *pgraph = m_plot->addGraph();
 
     if (pgraph != nullptr && params != nullptr) {
-//        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
+
+        //        setGraphColor(pgraph, QColor(QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256), QRandomGenerator::global()->bounded(256)));
         pgraph->setLineStyle(params->getLineStyle());
         pgraph->setScatterStyle(QCPScatterStyle(params->getScatterStyle()));
+
         if (!params->getPlotName().isEmpty())
             pgraph->setName(params->getPlotName());
 
         return pgraph;
     }
+
     return nullptr;
 }
 
@@ -296,45 +327,45 @@ QColor PvPlot::hsvToRgb(float h, float s, float v)
     float b = 0;
 
     switch (h_i) {
-        case 0:
-            r = v;
-            g = t;
-            b = p;
-            break;
-        case 1:
-            r = q;
-            g = v;
-            b = p;
-            break;
-        case 2:
-            r = p;
-            g = v;
-            b = t;
-            break;
-        case 3:
-            r = p;
-            g = q;
-            b = v;
-            break;
-        case 4:
-            r = t;
-            g = p;
-            b = v;
-            break;
-        case 5:
-            r = v;
-            g = p;
-            b = q;
-            break;
+    case 0:
+        r = v;
+        g = t;
+        b = p;
+        break;
+    case 1:
+        r = q;
+        g = v;
+        b = p;
+        break;
+    case 2:
+        r = p;
+        g = v;
+        b = t;
+        break;
+    case 3:
+        r = p;
+        g = q;
+        b = v;
+        break;
+    case 4:
+        r = t;
+        g = p;
+        b = v;
+        break;
+    case 5:
+        r = v;
+        g = p;
+        b = q;
+        break;
     }
     return QColor(int(r * 256), int(g * 256), int(b * 256));
 }
 
 QColor PvPlot::generateColor(QColor color)
 {
-//    int red = QRandomGenerator::global()->bounded(256);
-//    int green = QRandomGenerator::global()->bounded(256);
-//    int blue = QRandomGenerator::global()->bounded(256);
+    //    int red = QRandomGenerator::global()->bounded(256);
+    //    int green = QRandomGenerator::global()->bounded(256);
+    //    int blue = QRandomGenerator::global()->bounded(256);
     int red = 0;
     int green = 128;
     int blue = 255;

@@ -55,6 +55,7 @@ SOURCES += \
         src/ibasegraphbuilder.cpp \
         src/icustomplotbuilder.cpp \
         src/customplot.cpp \
+        src/parser_check.cpp \
 
 
 HEADERS += \
@@ -71,12 +72,14 @@ HEADERS += \
         header/ibasegraphbuilder.h \
         header/icustomplotbuilder.h \
         header/customplot.h \
+        header/parser_check.h \
         header/libraryglobal.h
 
 FORMS += \
         ui/mainwindow.ui \
         ui/paramsdialog.ui \
-        ui/functionstringdialog.ui
+        ui/functionstringdialog.ui \
+        ui/parser_check.ui
 
 DISTFILES +=
 

@@ -1,6 +1,6 @@
 QT += core
  
-TARGET = parser1
+TARGET = default_parser
 TEMPLATE = lib
  
 DEFINES += QUILIB_LIBRARY

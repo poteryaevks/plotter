@@ -15,14 +15,22 @@ namespace Ui {
 class MainWindow;
 }
 
+class ParserCheckDialog;
 using namespace plot_viewer;
 
 class MainWindow : public QMainWindow
 {
-    using FilePtr = std::unique_ptr<QFile, std::function<void(QFile*)>>;
-    using LibraryPtr = std::unique_ptr<QLibrary, std::function<void(QLibrary*)>>;
+    using FilePtr = std::shared_ptr<QFile>; //, std::function<void(QFile*)>
+    using IPvParserPtr = IPvParser*;
+    using ParserCheckDialogPtr = std::unique_ptr<ParserCheckDialog>;
     using ParseFuncType = std::function<Graph(QString)>;
+    using FileParserPair = QPair<FilePtr, IPvParserPtr>;
+    using LibraryPtr = std::shared_ptr<QLibrary>;
+    using FunctionStringDialogPtr = std::unique_ptr<FunctionStringDialog>;
     typedef IPvParser* (*ParserLoader)();
+
+    using RowData = QPair<QString, QString>;
+    using TableDataType = QList<RowData>;
 
     Q_OBJECT
 
@@ -47,6 +55,11 @@ public slots:
     //!
     void lineCalcExec(const QString& expression);
 
+    //!
+    //! \brief loadParsers
+    //!
+    void loadParsers(QList<QPair<QString, QString>>);
+
 private slots:
 
     void showHideLegend(bool p_onOff);
@@ -62,7 +75,7 @@ private slots:
     void showPrintPreview();
     void print(QPrinter *printer);
     void setTitleChart();
-    void openParser();
+    void runParserDialog();
 
 private:
 
@@ -82,14 +95,7 @@ private:
     //! \param fileName
     //! \return
     //!
-    QFile* loadFile(QString fileName);
-
-    //!
-    //! \brief loadParser
-    //! \param fileName
-    //! \return
-    //!
-    MainWindow::ParserLoader loadParser(QString fileName);
+    FilePtr loadFile(QString fileName);
 
     //!
     //! \brief extractGraphs
@@ -104,20 +110,34 @@ private:
     //! \param parser
     //!
     //!
-    void renderGraph(QFile* file,
-                     const ParseFuncType& parser);
+    void render(FileParserPair pair);
+
+    //!
+    //! \brief loadParser
+    //! \param library
+    //! \return
+    //!
+    IPvParser* loadParser(LibraryPtr library);
+
+    //!
+    //! \brief createLibrary
+    //! \param fileName
+    //! \return
+    //!
+    LibraryPtr createLibrary(const QString& fileName);
 
 private:
 
-    std::list<FilePtr> files_;
-    functionStringDialog *FunctionDialog_;
-    Ui::MainWindow *ui;
+    FunctionStringDialogPtr functionDialog_;
+    Ui::MainWindow *ui_;
     PvLineCalculator lineCalculator_;
     QWidget *m_graphWidget;
+    ParserCheckDialogPtr parserDialog_;
     CustomPlotBuilderPtr plotImpl_;
-    ParseFuncType parse_;      //! указатель на функцию парсинга строки
-    IPvParser* parser_;        //! интерфейс парсера
-    LibraryPtr library_;       //! загрузчик библиотеки парсера
+
+    QList<FileParserPair> files_;
+    QList<LibraryPtr> libraries_;                   //! загрузчик библиотеки парсера
+    QMap<IPvParser*, QLibrary*> libraryConnecter_;
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,6 @@
 QT += core
  
-TARGET = parser2
+TARGET = csv_proxy_parser
 TEMPLATE = lib
  
 DEFINES += QUILIB_LIBRARY

@@ -4,6 +4,7 @@
 #include "paramsdialog.h"
 #include "customplot.h"
 #include "pv_parsers.h"
+#include "parser_check.h"
 
 #include <algorithm>
 
@@ -15,19 +16,15 @@
 #include <QStringList>
 
 static const double POINTS_NUMBER { 10000 };
+static int GRAPH_NUM { 1 };
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , FunctionDialog_(new functionStringDialog)
-    , ui(new Ui::MainWindow)
-    , parse_(std::bind(defaultParse, std::placeholders::_1))
-    , parser_(nullptr)
+    , functionDialog_(std::make_unique<FunctionStringDialog>())
+    , ui_(new Ui::MainWindow)
+    , parserDialog_(std::make_unique<ParserCheckDialog>())
 {
-    ui->setupUi(this);
-
-    library_ = LibraryPtr(new QLibrary, [](QLibrary* library){
-            library->unload();
-});
+    ui_->setupUi(this);
 
     //        ui->customPlotLayout->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -35,36 +32,36 @@ MainWindow::MainWindow(QWidget *parent)
     m_graphWidget = plotImpl_->widget();
     m_graphWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    QHBoxLayout* layout = new QHBoxLayout(ui->frame);
-    ui->frame->setLayout(layout);
+    QHBoxLayout* layout = new QHBoxLayout(ui_->frame);
+    ui_->frame->setLayout(layout);
     layout->addWidget(m_graphWidget);
 
-    connect(ui->cbLegend,         SIGNAL(toggled(bool)),                      this, SLOT(showHideLegend(bool)));
-    connect(ui->openAction,       SIGNAL(triggered(bool)),                    this, SLOT(openFile()));
-    connect(ui->actionSet_parser, SIGNAL(triggered(bool)),                    this, SLOT(openParser()));
-    connect(ui->clearAction,      SIGNAL(triggered(bool)),                    this, SLOT(clear()));
-    connect(ui->printAction,      SIGNAL(triggered(bool)),                    this, SLOT(showPrint()));
-    connect(ui->previewAction,    SIGNAL(triggered(bool)),                    this, SLOT(showPrintPreview()));
-    connect(ui->titleChartAction, SIGNAL(triggered(bool)),                    this, SLOT(setTitleChart()));
-    connect(FunctionDialog_,      SIGNAL(sendString(const QString&)),         this, SLOT(lineCalcExec(const QString&)));
+    connect(ui_->cbLegend,         SIGNAL(toggled(bool)),                      this, SLOT(showHideLegend(bool)));
+    connect(ui_->openAction,       SIGNAL(triggered(bool)),                    this, SLOT(openFile()));
+    connect(ui_->actionSet_parser, SIGNAL(triggered(bool)),                    this, SLOT(runParserDialog()));
+    connect(ui_->clearAction,      SIGNAL(triggered(bool)),                    this, SLOT(clear()));
+    connect(ui_->printAction,      SIGNAL(triggered(bool)),                    this, SLOT(showPrint()));
+    connect(ui_->previewAction,    SIGNAL(triggered(bool)),                    this, SLOT(showPrintPreview()));
+    connect(ui_->titleChartAction, SIGNAL(triggered(bool)),                    this, SLOT(setTitleChart()));
+    connect(ui_->quitAction,       SIGNAL(triggered(bool)),                    qApp, SLOT(quit()));
+    connect(ui_->action_function,  SIGNAL(triggered(bool)),         functionDialog_.get(), SLOT(show()));
+    connect(functionDialog_.get(),      SIGNAL(sendString(const QString&)),         this, SLOT(lineCalcExec(const QString&)));
     connect(m_graphWidget,        SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-    connect(ui->quitAction,       SIGNAL(triggered(bool)),                    qApp, SLOT(quit()));
-    connect(ui->action_function,  SIGNAL(triggered(bool)),         FunctionDialog_, SLOT(show()));
+
+    connect(parserDialog_.get(),  &ParserCheckDialog::send,       this, &MainWindow::loadParsers);
 
     setWindowIcon(QIcon(":/graph.png"));
 }
 
 MainWindow::~MainWindow()
-{  
-    if(parser_)
-        delete parser_;
-
-    delete ui;
+{
+    delete ui_;
 }
 
 void MainWindow::showContextMenu(QPoint pos)
 {
     QPoint globalPos;
+
     // если запрос от QAbstractScrollArea
     if (sender()->inherits("QAbstractScrollArea"))
         globalPos = qobject_cast<QAbstractScrollArea*>(sender())->viewport()->mapToGlobal(pos);
@@ -122,47 +119,35 @@ void MainWindow::lineCalcExec(const QString& expression)
         QMessageBox::warning(m_graphWidget, "Error" , errInfo);
 }
 
-void MainWindow::openParser()
-{        
-    auto fileName = QFileDialog::getOpenFileName(this,
-                                                 QString::fromUtf8("Open file"),
-                                                 QDir::currentPath(),
-                                                 QString::fromUtf8("Dynamic libraries (*.so *.dll)")
-                                                 );
-
-
-    auto loadParserImpl = loadParser(std::move(fileName));
-    if(loadParserImpl){
-
-        parser_ = loadParserImpl();
-        parse_ = std::bind(&IPvParser::parse, parser_, std::placeholders::_1);
-    }
-    else{
-        parse_ = std::bind(defaultParse, std::placeholders::_1);
-    }
-
-    for(auto& file : files_){
-
-        plotImpl_->clearViewer();
-        file->reset();
-        renderGraph(file.get(), parse_);
-    }
-}
-
-MainWindow::ParserLoader MainWindow::loadParser(QString fileName)
+void MainWindow::runParserDialog()
 {
-    library_->setFileName(fileName);
+    TableDataType data;
 
-    if(!library_->load())
-        return nullptr;
+    for(auto file : files_){
 
-    return (ParserLoader)library_->resolve("loadParser");
+        RowData rowData;
+
+        rowData.first = file.first->fileName();
+
+        if(file.second)
+            rowData.second = libraryConnecter_[file.second]->fileName();
+        else
+            rowData.second = std::move(QString("default"));
+
+        data << std::move(rowData);
+    }
+
+    parserDialog_->setData(std::move(data));
+    parserDialog_->show();
 }
 
 void MainWindow::clear()
 {
     plotImpl_->clearViewer();
+    parserDialog_->reset();
     files_.clear();
+    libraryConnecter_.clear();
+    GRAPH_NUM = 1;
 }
 
 bool MainWindow::parseLine(QString line,
@@ -219,7 +204,6 @@ void MainWindow::openFile()
     auto fileName = QFileDialog::getOpenFileName(this,
                                                  QString::fromUtf8("Open file"),
                                                  QDir::currentPath()
-//                                                 , QString::fromUtf8("Text file (*.txt *.csv)")
                                                  );
     auto file = loadFile(std::move(fileName));
     if(!file){
@@ -228,16 +212,30 @@ void MainWindow::openFile()
         return;
     }
 
-    renderGraph(file, parse_);
+    files_.push_back(
+                FileParserPair(file, nullptr)
+                );
+
+    render(files_.back());
 }
 
-void MainWindow::renderGraph(QFile* file, const ParseFuncType& parser)
+void MainWindow::render(FileParserPair pair)
 {
+    ParseFuncType parseFunc;
+
+    auto file = pair.first;
+    auto parserLoader = pair.second;
+
     if(!file->isOpen()){
 
         qWarning("Data file is not opened");
         return;
     }
+
+    if(parserLoader)
+        parseFunc = std::bind(&IPvParser::parse, parserLoader, std::placeholders::_1);
+    else
+        parseFunc = std::bind(defaultParse, std::placeholders::_1);
 
     GraphRawData rawData;
 
@@ -247,21 +245,33 @@ void MainWindow::renderGraph(QFile* file, const ParseFuncType& parser)
         LineRawData lineRawData;
 
         auto success = parseLine(file->readLine(),
-                                   lineRawData,
-                                   parser);
-
+                                 lineRawData,
+                                 parseFunc);
         if(success)
             rawData << std::move(lineRawData);
     }
 
-    for(const auto& graph : extractGraphs(rawData))
-        plotImpl_->addGraph(graph, file->fileName());
+    QFileInfo fileInfo(*file);
+
+    for(auto& graph : extractGraphs(rawData)){
+
+        QString graphName = std::move(
+                    QString("%1_%2").arg(fileInfo.fileName()).arg(GRAPH_NUM++)
+                    );
+
+        plotImpl_->addGraph(
+                    std::move(graph),
+                    std::move(graphName)
+                    );
+    }
 }
 
-QFile* MainWindow::loadFile(QString fileName)
+MainWindow::FilePtr
+MainWindow::loadFile(QString fileName)
 {
     auto file = FilePtr(new QFile(fileName),
-                        [](QFile* f){ f->close(); });
+                        [](QFile* f){ f->close(); }
+            );
 
     if (!file->open(QFile::OpenModeFlag::ReadOnly)){
 
@@ -269,8 +279,7 @@ QFile* MainWindow::loadFile(QString fileName)
         return nullptr;
     }
 
-    files_.push_back(std::move(file));
-    return files_.back().get();
+    return file;
 }
 
 QList<Graph> MainWindow::extractGraphs(GraphRawData rawData)
@@ -343,4 +352,57 @@ void MainWindow::setTitleChart()
         return;
 
     plotImpl_->setTitle(title);
+}
+
+MainWindow::LibraryPtr MainWindow::createLibrary(const QString& fileName)
+{
+    return LibraryPtr(new QLibrary(fileName),
+                      [](QLibrary* lib) { lib->unload(); }
+    );
+}
+
+IPvParser* MainWindow::loadParser(LibraryPtr library)
+{
+    if(!library->load())
+        return nullptr;
+
+    auto loadParserImpl = (ParserLoader)library->resolve("loadParser");
+
+    if(loadParserImpl)
+        return loadParserImpl();
+    else
+        return nullptr;
+}
+
+void MainWindow::loadParsers(QList<QPair<QString, QString>> list)
+{
+    clear();
+
+    for(auto pair : list){
+
+        auto fileName = pair.first;
+        auto parserPath = pair.second;
+
+        auto file = loadFile(fileName);
+
+        auto library = createLibrary(parserPath);
+
+        auto parser = loadParser(library);
+
+
+        libraries_.push_back(
+                    library
+                    );
+
+        files_.push_back(
+                    FileParserPair(file, parser)
+                    );
+
+        libraryConnecter_.insert(parser,
+                                 library.get()
+                                 );
+    }
+
+    for(auto file : files_)
+        render(file);
 }

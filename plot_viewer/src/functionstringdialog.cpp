@@ -3,7 +3,7 @@
 
 #include <QIcon>
 
-functionStringDialog::functionStringDialog(QWidget *parent) :
+FunctionStringDialog::FunctionStringDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::functionStringDialog)
 {
@@ -13,17 +13,17 @@ functionStringDialog::functionStringDialog(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
-functionStringDialog::~functionStringDialog()
+FunctionStringDialog::~FunctionStringDialog()
 {
     delete ui;
 }
 
-void functionStringDialog::on_buttonBox_accepted()
+void FunctionStringDialog::on_buttonBox_accepted()
 {
     sendString(ui->expression->text());
 }
 
-void functionStringDialog::on_buttonBox_rejected()
+void FunctionStringDialog::on_buttonBox_rejected()
 {
     reject();
 }
