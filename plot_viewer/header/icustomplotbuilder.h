@@ -72,7 +72,7 @@ public:
          * \param values
          * \param nameGraph
          */
-    virtual void addGraph(std::vector<std::pair<double, double>>&& values, const QString &nameGraph = QString()) = 0;
+//    virtual void addGraph(const std::vector<std::pair<double, double>>& values, const QString &nameGraph = QString()) = 0;
 
     /*!
          * \brief xAxisMinChanged

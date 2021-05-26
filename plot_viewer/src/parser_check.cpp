@@ -12,6 +12,8 @@ ParserCheckDialog::ParserCheckDialog(QWidget *parent)
     ui_->setupUi(this);
 
     ui_->tableWidget->setColumnCount(2);
+    ui_->tableWidget->verticalHeader()->setVisible(false);
+    ui_->tableWidget->horizontalHeader()->setVisible(true);
 
     ui_->tableWidget->setHorizontalHeaderLabels(
                 QStringList{ tr("File"),
@@ -21,8 +23,6 @@ ParserCheckDialog::ParserCheckDialog(QWidget *parent)
     ui_->tableWidget->horizontalHeader()->setSectionResizeMode(
                 QHeaderView::ResizeToContents
                 );
-
-    ui_->tableWidget->horizontalHeader()->setVisible(true);
 
     setupModel(ui_->tableWidget, data_);
 }
@@ -75,8 +75,6 @@ void ParserCheckDialog::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
                                                      QDir::currentPath(),
                                                      QString::fromUtf8("Dynamic libraries (*.so *.dll)")
                                                      );
-
-
 
         data_[row].second = fileName;
         setupModel(item->tableWidget(), data_);

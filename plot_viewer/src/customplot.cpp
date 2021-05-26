@@ -12,26 +12,26 @@ extern "C" Library_EXPORT CustomPlotBuilderPtr Instance()
 }
 
 PvPlot::PvPlot()
-    : m_plot(std::make_unique<QCustomPlot>())
+    : plot_(std::make_unique<QCustomPlot>())
 {
-    m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    plot_->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     qDebug() << "Сreate QCustomPlot";
 }
 
 PvPlot::~PvPlot()
 {
-
+    clearViewer();
 }
 
 QWidget* PvPlot::widget()
 {
-    return m_plot.get();
+    return plot_.get();
 }
 
 QString PvPlot::title() const
 {
-    if (m_plot->plotLayout()->rowCount() > 1) {
-        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(m_plot->plotLayout()->element(0, 0));
+    if (plot_->plotLayout()->rowCount() > 1) {
+        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(plot_->plotLayout()->element(0, 0));
         if (titleElement != nullptr)
             return titleElement->text();
     }
@@ -41,53 +41,53 @@ QString PvPlot::title() const
 
 void PvPlot::setTitle(const QString &title)
 {
-    if (m_plot->plotLayout()->rowCount() == 1) {
-        m_plot->plotLayout()->insertRow(0);
-        m_plot->plotLayout()->addElement(0, 0, new QCPTextElement(m_plot.get(), title, QFont("sans", 12, QFont::Bold)));
+    if (plot_->plotLayout()->rowCount() == 1) {
+        plot_->plotLayout()->insertRow(0);
+        plot_->plotLayout()->addElement(0, 0, new QCPTextElement(plot_.get(), title, QFont("sans", 12, QFont::Bold)));
     }
     else {
-        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(m_plot->plotLayout()->element(0, 0));
+        QCPTextElement *titleElement = qobject_cast<QCPTextElement*>(plot_->plotLayout()->element(0, 0));
         if (titleElement != nullptr)
             titleElement->setText(title);
     }
 
-    repaintPlot();
+    repaint();
 }
 
 void PvPlot::showViewer()
 {
-    if (m_plot != nullptr) {
+    if (plot_ != nullptr) {
         QRect screenGeometry = QGuiApplication::screens()[0]->geometry();
 
         // resize widget
-        m_plot->resize(screenGeometry.width() / 2, screenGeometry.height() / 2);
+        plot_->resize(screenGeometry.width() / 2, screenGeometry.height() / 2);
         // set center display
-        int x = (screenGeometry.width() - m_plot->width()) / 2;
-        int y = (screenGeometry.height() - m_plot->height()) / 2;
-        m_plot->move(x, y);
+        int x = (screenGeometry.width() - plot_->width()) / 2;
+        int y = (screenGeometry.height() - plot_->height()) / 2;
+        plot_->move(x, y);
 
-        m_plot->show();
+        plot_->show();
     }
 }
 
 void PvPlot::clearViewer()
 {
-    foreach (PvPlotParams* params, m_params) {
-        if (params != nullptr)
+    for (auto params : params_)
+        if (params)
             delete params;
-    }
 
-    m_configPlot = {};
-    m_graphsValues.clear();
-    m_graphs.clear();
-    m_params.clear();
-    m_plot->clearGraphs();
-    m_plot->replot();
+    params_.clear();
+
+    configPlot_ = {};
+    graphsValues_.clear();
+    //    graphs_.clear();
+    plot_->clearGraphs();
+    plot_->replot();
 }
 
-void PvPlot::addValues(const QVector<QPair<double, double>> &values)
+void PvPlot::addValues(const Graph &values)
 {
-    m_graphsValues.append(values);
+    graphsValues_.append(values);
 }
 
 void PvPlot::addValues(const std::vector<std::pair<double, double>> &values)
@@ -97,7 +97,7 @@ void PvPlot::addValues(const std::vector<std::pair<double, double>> &values)
     for (auto v : values)
         graphValues.append(qMakePair(v.first, v.second));
 
-    m_graphsValues.append(graphValues);
+    graphsValues_.append(graphValues);
 }
 
 void PvPlot::addGraph(const Graph &values, const QString &nameGraph)
@@ -105,89 +105,67 @@ void PvPlot::addGraph(const Graph &values, const QString &nameGraph)
     PvPlotParams *params = new PvPlotParams(defaultParams);
     params->setPlotName(nameGraph);
 
-    QCPGraph* graph = createGraph(params);
+    auto graph = createGraph(params);
 
-    if (graph != nullptr) {
-        m_graphsValues.append(values);
+    if (!graph)
+        return;
 
-        QVector<double> xValues;
-        QVector<double> yValues;
+    graphsValues_ << values;
 
-        for (auto pointValue : values) {
-            xValues << pointValue.first;
-            yValues << pointValue.second;
-        }
+    QVector<double> xs;
+    QVector<double> ys;
 
-        graph->setData(xValues, yValues);
-        m_graphs << graph;
-        m_params << params;
-        updateAxis();
-        repaintPlot();
+    for (const auto& pointValue : values) {
+        xs << pointValue.first;
+        ys << pointValue.second;
     }
+
+    graph->setData(xs, ys);
+    params_ << params;
+    updateAxis();
+    repaint();
 }
 
-void PvPlot::addGraph(Graph &&values, QString &&nameGraph)
+void PvPlot::addGraph(Graph&& values, QString&& nameGraph)
 {
-//    PvPlotParams *params = new PvPlotParams(defaultParams);
-
-//    params->setPlotName(
-//                std::move(nameGraph)
-//                );
-
-//    QCPGraph* graph = createGraph(params);
-
-//    if (graph != nullptr) {
-//        m_graphsValues.append(values);
-
-//        QVector<double> xValues;
-//        QVector<double> yValues;
-
-//        for (auto pointValue : values) {
-//            xValues << pointValue.first;
-//            yValues << pointValue.second;
-//        }
-
-//        graph->setData(xValues, yValues);
-//        m_graphs << graph;
-//        m_params << params;
-//        updateAxis();
-//        repaintPlot();
-//    }
+    Q_UNUSED(values)
+    Q_UNUSED(nameGraph)
 }
 
 void PvPlot::xAxisMinChanged(double value)
 {
-    m_configPlot.xAxisMin = value;
-    repaintPlot();
+    configPlot_.xAxisMin = value;
+    repaint();
 }
 
 void PvPlot::xAxisMaxChanged(double value)
 {
-    m_configPlot.xAxisMax = value;
-    repaintPlot();
+    configPlot_.xAxisMax = value;
+    repaint();
 }
 
 void PvPlot::yAxisMinChanged(double value)
 {
-    m_configPlot.yAxisMin = value;
-    repaintPlot();
+    configPlot_.yAxisMin = value;
+    repaint();
 }
 
 void PvPlot::yAxisMaxChanged(double value)
 {
-    m_configPlot.yAxisMax = value;
-    repaintPlot();
+    configPlot_.yAxisMax = value;
+    repaint();
 }
 
 void PvPlot::showHideLegend()
 {
-    m_plot->legend->setVisible(!m_plot->legend->visible());
-    m_plot->replot();
+    plot_->legend->setVisible(!plot_->legend->visible());
+    plot_->replot();
 }
 
 void PvPlot::draw()
 {
-    for (auto graphValues : m_graphsValues) {
+    for (auto graphValues : graphsValues_) {
+
         PvPlotParams *params = new PvPlotParams(defaultParams);
         QCPGraph* graph = createGraph(params);
 
@@ -200,22 +178,21 @@ void PvPlot::draw()
                 yValues << pointValue.second;
             }
             graph->setData(xValues, yValues);
-            m_graphs << graph;
-            m_params << params;
+            params_ << params;
         }
     }
     updateAxis();
-    repaintPlot();
+    repaint();
 }
 
 void PvPlot::applyParams()
 {
-    repaintPlot();
+    repaint();
 }
 
 QCPGraph* PvPlot::createGraph(PvPlotParams *params)
 {
-    QCPGraph *pgraph = m_plot->addGraph();
+    QCPGraph *pgraph = plot_->addGraph();
 
     if (pgraph != nullptr && params != nullptr) {
 
@@ -239,50 +216,55 @@ void PvPlot::updateAxis()
     double xMin = 0;
     double yMin = 0;
 
-    for (int i = 0; i < m_graphsValues.size(); i++) {
-        QVector<QPair<double, double>>::const_iterator it(m_graphsValues.at(i).begin());
+    for (const auto& graphValue : graphsValues_) {  //int i = 0; i < graphsValues_.size(); i++
 
-        while (it != m_graphsValues.at(i).end()) {
-            xMax = qMax(xMax, (*it).first);
-            yMax = qMax(yMax, (*it).second);
+        for (const auto& point : graphValue){
+
+            auto x = point.first;
+            auto y = point.second;
+
+            xMax = qMax(xMax, x);
+            yMax = qMax(yMax, y);
 
             if (xMin == 0 || yMin == 0) {
                 xMin = xMax;
                 yMin = yMax;
             }
-            xMin = qMin(xMin, (*it).first);
-            yMin = qMin(yMin, (*it).second);
-            ++it;
+
+            xMin = qMin(xMin, x);
+            yMin = qMin(yMin, y);
         }
     }
-    m_configPlot.xAxisMax = xMax;
-    m_configPlot.xAxisMin = xMin;
-    m_configPlot.yAxisMax = yMax;
-    m_configPlot.yAxisMin = yMin;
+
+    configPlot_.xAxisMax = xMax;
+    configPlot_.xAxisMin = xMin;
+    configPlot_.yAxisMax = yMax;
+    configPlot_.yAxisMin = yMin;
 }
 
-void PvPlot::repaintPlot()
+void PvPlot::repaint()
 {
-    int i = 0;
     QMap<int, QCPGraph*> graphWithGenColor;
 
-    for (auto pgraph : m_graphs) {
-        if (m_params.size() < i)
-            break;
-        auto ls = m_params.at(i)->getLineStyle();
-        auto sc = m_params.at(i)->getScatterStyle();
-        auto color = m_params.at(i)->getColor();
-        pgraph->setLineStyle(ls);
-        pgraph->setScatterStyle(QCPScatterStyle(sc));
+    for (int j = 0; j < plot_->graphCount(); j++) {
 
-        if (m_params.at(i)->isCustomColor()) {
-            setGraphColor(pgraph, color);
-            i++;
+        auto graph = plot_->graph(j);
+
+        if (params_.size() < j)
+            break;
+
+        auto ls = params_.at(j)->getLineStyle();
+        auto sc = params_.at(j)->getScatterStyle();
+        auto color = params_.at(j)->getColor();
+        graph->setLineStyle(ls);
+        graph->setScatterStyle(QCPScatterStyle(sc));
+
+        if (params_.at(j)->isCustomColor()) {
+            setGraphColor(graph, color);
             continue;
         }
 
-        graphWithGenColor.insert(i, pgraph);
-        i++;
+        graphWithGenColor.insert(j, graph);
     }
 
     // Set begin color for first graph
@@ -295,24 +277,25 @@ void PvPlot::repaintPlot()
         hue = fmod(hue, 1.);
         setGraphColor(graphWithGenColor.value(k), hsvToRgb(hue, 0.5, 0.95));        // s=0.99, v=0.99; s=0.25, h=0.8; s=0.3, v=0.99
 
-        if (k < m_params.size())
-            m_params[k]->setColor(hsvToRgb(hue, 0.5, 0.95));
+        if (k < params_.size())
+            params_[k]->setColor(hsvToRgb(hue, 0.5, 0.95));
     }
 
-    m_plot->xAxis->setRange(m_configPlot.xAxisMin, m_configPlot.xAxisMax);
-    m_plot->yAxis->setRange(m_configPlot.yAxisMin, m_configPlot.yAxisMax);
-    m_plot->replot();
+    plot_->xAxis->setRange(configPlot_.xAxisMin, configPlot_.xAxisMax);
+    plot_->yAxis->setRange(configPlot_.yAxisMin, configPlot_.yAxisMax);
+    plot_->replot();
 }
 
-void PvPlot::setGraphColor(QCPGraph* g, QColor color)
+void PvPlot::setGraphColor(QCPGraph* graph, QColor color)
 {
-    if (g == nullptr)
+    if (graph == nullptr)
         return;
-    qDebug() << g << color;
-    auto pen = g->pen();
+
+    qDebug() << graph << color;
+    auto pen = graph->pen();
     pen.setColor(color);
     pen.setWidthF(3);
-    g->setPen(pen);
+    graph->setPen(pen);
 }
 
 QColor PvPlot::hsvToRgb(float h, float s, float v)

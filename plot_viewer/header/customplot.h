@@ -6,7 +6,6 @@
 #include "libraryglobal.h"
 #include "common_types.h"
 
-
 #include <QWidget>
 
 class QCustomPlot;
@@ -20,9 +19,13 @@ struct ConfigPlot {
 
 //using GraphValues = QVector<QPair<double, double>>;
 
-class Library_EXPORT PvPlot final : public IPlot
+class Library_EXPORT PvPlot final
+        : public IPlot
 {
+
     using CustomPlotPtr = std::unique_ptr<QCustomPlot>;
+    using QCPGraphPtr = std::unique_ptr<QCPGraph>;
+    using PvPlotParamsPtr = std::shared_ptr<PvPlotParams>;
 
 public:
 
@@ -47,7 +50,7 @@ public:
     void draw() override;
     void applyParams() override;
 
-    QList<PvPlotParams*>& params() override { return m_params; }
+    QList<PvPlotParams*>& params() override { return params_; }
     QColor generateColor(QColor color);
     QColor hsvToRgb(float h, float s, float v);
 
@@ -55,15 +58,15 @@ private:
 
     QCPGraph* createGraph(PvPlotParams *params);
     void updateAxis();
-    void repaintPlot();
+    void repaint();
     void setGraphColor(QCPGraph* g, QColor color);
 private:
 
-    ConfigPlot m_configPlot;
-    CustomPlotPtr m_plot;
-    QVector<QCPGraph*> m_graphs;
-    QList<PvPlotParams*> m_params;
-    QList<Graph> m_graphsValues;
+    ConfigPlot configPlot_;
+    CustomPlotPtr plot_;
+    QVector<QCPGraph*> graphs_;
+    QList<PvPlotParams*> params_;
+    QList<Graph> graphsValues_;
 
 };
 

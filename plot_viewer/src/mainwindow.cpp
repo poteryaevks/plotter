@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    clear();
     delete ui_;
 }
 
@@ -69,7 +70,7 @@ void MainWindow::showContextMenu(QPoint pos)
         globalPos = m_graphWidget->mapToGlobal(pos);
 
     QMenu menu;
-    QAction *openParams = new QAction(QString::fromUtf8("Открыть параметры..."), this);
+    QAction *openParams = new QAction(QString::fromUtf8("Options..."), this);
     menu.addAction(openParams);
 
     connect(openParams, SIGNAL(triggered()), this, SLOT(showParamsPlot()));
@@ -80,6 +81,7 @@ void MainWindow::showContextMenu(QPoint pos)
 void MainWindow::showParamsPlot()
 {
     if (plotImpl_ != nullptr) {
+
         ParamsDialog dialog(&plotImpl_->params(), this);
 
         if (dialog.exec() == QDialog::Accepted) {
@@ -260,8 +262,8 @@ void MainWindow::render(FileParserPair pair)
                     );
 
         plotImpl_->addGraph(
-                    std::move(graph),
-                    std::move(graphName)
+                    graph,
+                    graphName
                     );
     }
 }
