@@ -7,7 +7,9 @@
 #include <QStringListModel>
 #include <QPainter>
 
-#include "base.h"
+#include "common_types.h"
+
+using namespace plot_viewer;
 
 class ColorModel  : public QAbstractListModel
 {
@@ -19,7 +21,12 @@ public:
     virtual ~ColorModel() {}
 
 public slots:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const { return m_colors.size(); }
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const
+    {
+        Q_UNUSED(parent)
+        return m_colors.size();
+    }
     QVariant data(const QModelIndex &index, int role = Qt::BackgroundRole) const;
     //virtual Qt::ItemFlags flags(const QModelIndex &index) const  override;
 

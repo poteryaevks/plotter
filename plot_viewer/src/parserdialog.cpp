@@ -1,34 +1,20 @@
-#include "parser_check.h"
+#include "parserdialog.h"
 #include "ui_parser_check.h"
 #include "parsers/parser_interface.h"
 
 #include <QFileDialog>
 #include <QLibrary>
 
-ParserCheckDialog::ParserCheckDialog(QWidget *parent)
+ParserDialog::ParserDialog(QWidget *parent)
     : QDialog(parent),
       ui_(new Ui::ParserCheck)
 {
     ui_->setupUi(this);
-
-    ui_->tableWidget->setColumnCount(2);
-    ui_->tableWidget->verticalHeader()->setVisible(false);
-    ui_->tableWidget->horizontalHeader()->setVisible(true);
-
-    ui_->tableWidget->setHorizontalHeaderLabels(
-                QStringList{ tr("File"),
-                             tr("Parser library") }
-                );
-
-    ui_->tableWidget->horizontalHeader()->setSectionResizeMode(
-                QHeaderView::ResizeToContents
-                );
-
     setupModel(ui_->tableWidget, data_);
 }
 
 
-void ParserCheckDialog::setupModel(QTableWidget* table, const TableDataType& data)
+void ParserDialog::setupModel(QTableWidget* table, const TableDataType& data)
 {
     // ..resize table..
     while(table->rowCount() < data.size())
@@ -43,27 +29,40 @@ void ParserCheckDialog::setupModel(QTableWidget* table, const TableDataType& dat
 
         currentRow++;
     }
+
+    table->setColumnCount(2);
+    table->verticalHeader()->setVisible(false);
+    table->horizontalHeader()->setVisible(true);
+
+    table->setHorizontalHeaderLabels(
+                QStringList{ tr("File"),
+                             tr("Parser library") }
+                );
+
+    table->horizontalHeader()->setSectionResizeMode(
+                QHeaderView::ResizeToContents
+                );
 }
 
-ParserCheckDialog::~ParserCheckDialog()
+ParserDialog::~ParserDialog()
 {
     delete ui_;
 }
 
-void ParserCheckDialog::setData(ParserCheckDialog::TableDataType&& data)
+void ParserDialog::setData(ParserDialog::TableDataType&& data)
 {
     data_ = std::move(data);
     setupModel(ui_->tableWidget, data_);
 }
 
-void ParserCheckDialog::reset()
+void ParserDialog::reset()
 {
     data_.clear();
     ui_->tableWidget->clear();
 }
 
 
-void ParserCheckDialog::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+void ParserDialog::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
     auto column = item->column();
     auto row = item->row();
@@ -79,10 +78,9 @@ void ParserCheckDialog::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
         data_[row].second = fileName;
         setupModel(item->tableWidget(), data_);
     }
-
 }
 
-void ParserCheckDialog::on_buttonBox_accepted()
+void ParserDialog::on_buttonBox_accepted()
 {
     send(data_);
 }

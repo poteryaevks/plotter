@@ -3,28 +3,20 @@
 PvPlotParams::PvPlotParams(Qt::GlobalColor color,
                            QCPScatterStyle::ScatterShape shape,
                            QCPGraph::LineStyle ls,
-                           const QString &name,
-                           QWidget *parent)
-    : QObject(parent)
-    ,m_customColor(false)
-    ,m_plotName(name)
-    ,m_color(color)
-    ,m_scShape(shape)
-    ,m_ls(ls)
+                           const QString &name)
+    : bCustomColor_(false)
+    , name_(name)
+    , color_(color)
+    , shape_(shape)
+    , ls_(ls)
 {
-
-}
-
-PvPlotParams::PvPlotParams(const PvPlotParams& params)
-{
-    m_customColor = false;
-    m_color = params.getColor();
-    m_ls = params.getLineStyle();
-    m_scShape = params.getScatterStyle();
 }
 
 void PvPlotParams::setColor(QColor color, bool customColor)
 {
-    m_customColor = customColor;
-    m_color = color;
+    bCustomColor_ = customColor;
+    color_ = color;
 }
+
+
+PvPlotParams DEFAULT_PLOT_PARAMS(Qt::black, QCPScatterStyle::ssDot, QCPGraph::lsLine);

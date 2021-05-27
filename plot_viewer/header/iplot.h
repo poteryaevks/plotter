@@ -9,19 +9,14 @@
 #include <QWidget>
 
 class PvPlotParams;
-class IPlot;
-using CustomPlotBuilderPtr = std::shared_ptr<IPlot>;
 
 using namespace plot_viewer;
 
 /*!
- * \brief The ICustomPlotBuilder class Интерфейсный класс для взаимодей с QCustomPlot
+ * \brief The IPlot class Интерфейсный класс
  */
 class IPlot : public IBaseGraphBuilder
 {
-protected:
-    virtual ~IPlot() = default;
-
 public:
     virtual QWidget* widget() = 0;
 
@@ -72,7 +67,7 @@ public:
          * \param values
          * \param nameGraph
          */
-//    virtual void addGraph(const std::vector<std::pair<double, double>>& values, const QString &nameGraph = QString()) = 0;
+    //    virtual void addGraph(const std::vector<std::pair<double, double>>& values, const QString &nameGraph = QString()) = 0;
 
     /*!
          * \brief xAxisMinChanged
@@ -112,7 +107,8 @@ public:
          */
 
     virtual QList<PvPlotParams*>& params() = 0;
-    static CustomPlotBuilderPtr CreateInstance(); // функция-фабрика
+
+    virtual ~IPlot() = default;
 };
 
 #endif // ICUSTOMPLOTBUILDER_H

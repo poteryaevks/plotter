@@ -1,8 +1,7 @@
 #include "paramsdialog.h"
 #include "ui_paramsdialog.h"
-#include "base.h"
 
-ParamsDialog::ParamsDialog(QList<PvPlotParams*>* data, QWidget *parent) :
+PvParamsDialog::PvParamsDialog(QList<PvPlotParams*>* data, QWidget *parent) :
     QDialog(parent),
     m_pdata(data),
     ui(new Ui::ParamsDialog)
@@ -19,17 +18,17 @@ ParamsDialog::ParamsDialog(QList<PvPlotParams*>* data, QWidget *parent) :
     ui->tableWidget->setItemDelegateForColumn(3, new ListDelegate(defaultScatters.keys(), this));
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    connect(ui->applyButton, &QPushButton::clicked, this, &ParamsDialog::writeParams);
-    connect(ui->applyButton, &QPushButton::clicked, this, &ParamsDialog::accept);
-    connect(ui->tableWidget, &QTableWidget::cellClicked, this, &ParamsDialog::showColorDialog);
+    connect(ui->applyButton, &QPushButton::clicked, this, &PvParamsDialog::writeParams);
+    connect(ui->applyButton, &QPushButton::clicked, this, &PvParamsDialog::accept);
+    connect(ui->tableWidget, &QTableWidget::cellClicked, this, &PvParamsDialog::showColorDialog);
 }
 
-ParamsDialog::~ParamsDialog()
+PvParamsDialog::~PvParamsDialog()
 {
     delete ui;
 }
 
-void ParamsDialog::setupModel()
+void PvParamsDialog::setupModel()
 {
 //    model = new QStandardItemModel(this);
 //    model->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Color") << tr("Line style") << tr("Point style"));
@@ -54,7 +53,7 @@ void ParamsDialog::setupModel()
     }
 }
 
-void ParamsDialog::writeParams()
+void PvParamsDialog::writeParams()
 {
     int i = 0;
 
@@ -68,7 +67,7 @@ void ParamsDialog::writeParams()
     }
 }
 
-void ParamsDialog::showColorDialog(int row, int column)
+void PvParamsDialog::showColorDialog(int row, int column)
 {
     if (column == 1) {
         QColorDialog *colorDialog = new QColorDialog(this);

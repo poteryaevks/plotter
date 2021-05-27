@@ -9,14 +9,17 @@ int main(int argc, char *argv[])
 
     MainWindow mainWindow;
 
-//    QPalette app_palette;
-//    setDarkPalette(app_palette);
+//    QPalette palette;
+//    setDarkPalette(palette);
+//    app.setPalette(palette);
+
     app.setStyle(QStyleFactory::create("Fusion"));
 
     QTranslator translator;
     // look up e.g. :/translations/myapp_de.qm
     if (translator.load(QLocale(), QLatin1String("PlotViewer"), QLatin1String("_"), QLatin1String(":/translations/res")))
         app.installTranslator(&translator);
+
     qDebug() << QLatin1String("PlotViewer") + QLatin1String("_") + QLocale().name();
 
     mainWindow.show();

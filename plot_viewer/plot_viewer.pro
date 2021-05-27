@@ -41,44 +41,40 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += header
+INCLUDEPATH += header \
+               $$PWD/../depends
 
 SOURCES += \
-        src/qcustomplot.cpp \
         src/main.cpp \
-        src/PvLineCalculator.cpp \
         src/plotparams.cpp \
         src/paramsdialog.cpp \
         src/comboboxdelegate.cpp \
-        src/functionstringdialog.cpp \
         src/mainwindow.cpp \
         src/ibasegraphbuilder.cpp \
-        src/icustomplotbuilder.cpp \
+        src/plot_factory.cpp \
         src/customplot.cpp \
-        src/parser_check.cpp \
+        src/parserdialog.cpp \
+        $$PWD/../depends/qcustomplot.cpp
 
 
 HEADERS += \
-        header/qcustomplot.h \
         header/common_types.h \
-        header/pv_parsers.h \
-        header/PvLineCalculator.h \
+        header/defaultparser.h \
         header/plotparams.h \
         header/paramsdialog.h \
         header/comboboxdelegate.h \
-        header/base.h \
-        header/functionstringdialog.h \
         header/mainwindow.h \
         header/ibasegraphbuilder.h \
-        header/icustomplotbuilder.h \
+        header/iplot.h \
         header/customplot.h \
-        header/parser_check.h \
-        header/libraryglobal.h
+        header/parserdialog.h \
+        header/libraryglobal.h \
+        header/plot_factory.h  \
+        $$PWD/../depends/qcustomplot.h
 
 FORMS += \
         ui/mainwindow.ui \
         ui/paramsdialog.ui \
-        ui/functionstringdialog.ui \
         ui/parser_check.ui
 
 DISTFILES +=

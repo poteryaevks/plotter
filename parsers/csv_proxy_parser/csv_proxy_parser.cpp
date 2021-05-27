@@ -98,7 +98,7 @@ LineRawData CsvProxyParser::parse(QString line)
     if(!success)
         throw std::runtime_error("Unable to parse line");
 
-    if(data.id != 3313)
+    if(data.id != 3312)
         throw std::runtime_error("Uncorrect object id");
 
     rawData << Point(data.time, data.b);

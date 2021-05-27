@@ -2,44 +2,51 @@
 #define PLOTPARAMS_H
 
 #include <QDialog>
+
+#include "common_types.h"
 #include "qcustomplot.h"
 
-class PvPlotParams : public QObject
+//!
+//! \brief The PvPlotParams class
+//!
+class PvPlotParams
 {
-    Q_OBJECT
+
 public:
-    explicit PvPlotParams(QWidget *parent = 0) = delete;
-    PvPlotParams(Qt::GlobalColor color, QCPScatterStyle::ScatterShape shape, QCPGraph::LineStyle ls, const QString &name = "plot", QWidget *parent = nullptr);
-    PvPlotParams(const PvPlotParams& params);
+
+    PvPlotParams(Qt::GlobalColor color,
+                 QCPScatterStyle::ScatterShape shape,
+                 QCPGraph::LineStyle ls,
+                 const QString &name = "plot");
+
+    PvPlotParams(const PvPlotParams&) = default;
+    PvPlotParams(PvPlotParams&&) = default;
+
     ~PvPlotParams() {}
 
 public:
-    inline QColor getColor() const { return m_color; }
-    inline QCPScatterStyle::ScatterShape getScatterStyle() const { return m_scShape; }
-    inline QCPGraph::LineStyle getLineStyle() const { return m_ls; }
-    inline QString getPlotName() const { return m_plotName; }
-    inline QString getParser() const { return m_parser; }
+
+    QColor getColor() const { return color_; }
+    QCPScatterStyle::ScatterShape getScatterStyle() const { return shape_; }
+    QCPGraph::LineStyle getLineStyle() const { return ls_; }
+    QString getPlotName() const { return name_; }
 
     void setColor(QColor color, bool customColor = false);
-    inline void setScatterStyle(QCPScatterStyle::ScatterShape scShape) { m_scShape = scShape; }
-    inline void setLineStyle(QCPGraph::LineStyle ls) { m_ls = ls; }
-    inline void setPlotName(const QString &name) { m_plotName = name; }
-    inline void setParser(const QString &parser) { m_parser = parser; }
+    void setScatterStyle(QCPScatterStyle::ScatterShape scShape) { shape_ = scShape; }
+    void setLineStyle(QCPGraph::LineStyle ls) { ls_ = ls; }
+    void setPlotName(const QString &name) { name_ = name; }
 
-    inline bool isCustomColor() { return m_customColor; }
+    bool isCustomColor() { return bCustomColor_; }
 
 private:
 
-    bool m_customColor;
-    QString m_plotName;
-    QColor m_color;
-    QCPScatterStyle::ScatterShape m_scShape;
-    QCPGraph::LineStyle m_ls;
-    QString m_parser;
+    bool bCustomColor_;
+    QString name_;
+    QColor color_;
+    QCPScatterStyle::ScatterShape shape_;
+    QCPGraph::LineStyle ls_;
 };
 
-Q_DECLARE_TYPEINFO(PvPlotParams, Q_MOVABLE_TYPE);
-
-const static PvPlotParams defaultParams(Qt::black, QCPScatterStyle::ssDot, QCPGraph::lsLine);
+extern PvPlotParams DEFAULT_PLOT_PARAMS;
 
 #endif // PLOTPARAMS_H

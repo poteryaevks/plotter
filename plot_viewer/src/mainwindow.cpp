@@ -2,9 +2,11 @@
 #include "ui_mainwindow.h"
 #include "plotparams.h"
 #include "paramsdialog.h"
-#include "customplot.h"
-#include "pv_parsers.h"
-#include "parser_check.h"
+#include "defaultparser.h"
+#include "parserdialog.h"
+#include "iplot.h"
+#include "parsers/parser_interface.h"
+#include "plot_factory.h"
 
 #include <algorithm>
 
@@ -15,42 +17,45 @@
 #include <QLoggingCategory>
 #include <QStringList>
 
+
+
 static const double POINTS_NUMBER { 10000 };
 static int GRAPH_NUM { 1 };
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , functionDialog_(std::make_unique<FunctionStringDialog>())
     , ui_(new Ui::MainWindow)
-    , parserDialog_(std::make_unique<ParserCheckDialog>())
+    , parserDialog_(std::make_unique<ParserDialog>())
 {
     ui_->setupUi(this);
 
     //        ui->customPlotLayout->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    plotImpl_ = PvPlot::CreateInstance();
-    m_graphWidget = plotImpl_->widget();
-    m_graphWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    plotImpl_ = createPlot(QCUSTOM_PLOT);
+
+    graphWidget_ = plotImpl_->widget();
+    graphWidget_->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QHBoxLayout* layout = new QHBoxLayout(ui_->frame);
     ui_->frame->setLayout(layout);
-    layout->addWidget(m_graphWidget);
+    layout->addWidget(graphWidget_);
 
     connect(ui_->cbLegend,         SIGNAL(toggled(bool)),                      this, SLOT(showHideLegend(bool)));
     connect(ui_->openAction,       SIGNAL(triggered(bool)),                    this, SLOT(openFile()));
-    connect(ui_->actionSet_parser, SIGNAL(triggered(bool)),                    this, SLOT(runParserDialog()));
     connect(ui_->clearAction,      SIGNAL(triggered(bool)),                    this, SLOT(clear()));
     connect(ui_->printAction,      SIGNAL(triggered(bool)),                    this, SLOT(showPrint()));
     connect(ui_->previewAction,    SIGNAL(triggered(bool)),                    this, SLOT(showPrintPreview()));
     connect(ui_->titleChartAction, SIGNAL(triggered(bool)),                    this, SLOT(setTitleChart()));
+    connect(graphWidget_,          SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     connect(ui_->quitAction,       SIGNAL(triggered(bool)),                    qApp, SLOT(quit()));
-    connect(ui_->action_function,  SIGNAL(triggered(bool)),         functionDialog_.get(), SLOT(show()));
-    connect(functionDialog_.get(),      SIGNAL(sendString(const QString&)),         this, SLOT(lineCalcExec(const QString&)));
-    connect(m_graphWidget,        SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-
-    connect(parserDialog_.get(),  &ParserCheckDialog::send,       this, &MainWindow::loadParsers);
+    connect(parserDialog_.get(),   &ParserDialog::send,                        this, &MainWindow::loadParsers);
 
     setWindowIcon(QIcon(":/graph.png"));
+}
+
+MainWindow::CustomPlotBuilderPtr MainWindow::createPlot(plot_viewer::ePlotType type)
+{
+    return plot_viewer::FACTORY.Create(type);
 }
 
 MainWindow::~MainWindow()
@@ -67,13 +72,18 @@ void MainWindow::showContextMenu(QPoint pos)
     if (sender()->inherits("QAbstractScrollArea"))
         globalPos = qobject_cast<QAbstractScrollArea*>(sender())->viewport()->mapToGlobal(pos);
     else
-        globalPos = m_graphWidget->mapToGlobal(pos);
+        globalPos = graphWidget_->mapToGlobal(pos);
 
     QMenu menu;
-    QAction *openParams = new QAction(QString::fromUtf8("Options..."), this);
+
+    QAction* openParams = new QAction(QString::fromUtf8("Options..."), this);
     menu.addAction(openParams);
 
+    QAction* openParserBrowser = new QAction(QString::fromUtf8("Parsers..."), this);
+    menu.addAction(openParserBrowser);
+
     connect(openParams, SIGNAL(triggered()), this, SLOT(showParamsPlot()));
+    connect(openParserBrowser, SIGNAL(triggered()), this, SLOT(runParserDialog()));
 
     menu.exec(globalPos);
 }
@@ -82,43 +92,12 @@ void MainWindow::showParamsPlot()
 {
     if (plotImpl_ != nullptr) {
 
-        ParamsDialog dialog(&plotImpl_->params(), this);
+        PvParamsDialog dialog(&plotImpl_->params(), this);
 
         if (dialog.exec() == QDialog::Accepted) {
             plotImpl_->applyParams();
         }
     }
-}
-
-void MainWindow::lineCalcExec(const QString& expression)
-{
-    QString errInfo;
-    Graph graph;
-
-    QString function_x(expression);
-    if (function_x.isEmpty())
-        return;
-
-    for (std::size_t x{ 0 }; x < 500; ++x) {
-
-        QString func = function_x;
-        QString str_i = QString::number(x);
-        func.replace("x", str_i);
-
-        try {
-            auto y = lineCalculator_.calculate(func.toStdString());
-            graph << Point(x, y);
-        }
-        catch (const std::exception &ex) {
-            errInfo = ex.what();
-            break;
-        }
-    }
-
-    plotImpl_->addGraph(graph, QString("User function"));
-
-    if(!errInfo.isEmpty())
-        QMessageBox::warning(m_graphWidget, "Error" , errInfo);
 }
 
 void MainWindow::runParserDialog()
@@ -335,8 +314,8 @@ void MainWindow::print(QPrinter *printer)
 {
     if (printer != nullptr) {
         QPainter painter(printer);
-        painter.setWindow(m_graphWidget->rect());
-        m_graphWidget->render(&painter);
+        painter.setWindow(graphWidget_->rect());
+        graphWidget_->render(&painter);
     }
 }
 
@@ -380,7 +359,7 @@ void MainWindow::loadParsers(QList<QPair<QString, QString>> list)
 {
     clear();
 
-    for(auto pair : list){
+    for(const auto& pair : list){
 
         auto fileName = pair.first;
         auto parserPath = pair.second;
@@ -405,6 +384,6 @@ void MainWindow::loadParsers(QList<QPair<QString, QString>> list)
                                  );
     }
 
-    for(auto file : files_)
+    for(const auto& file : files_)
         render(file);
 }

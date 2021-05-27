@@ -13,43 +13,36 @@ class ParserCheck;
 class QTableWidget;
 class QLibrary;
 class QTableWidgetItem;
-class IPvParser;
 
 //!
 //! \brief The ParserCheckDialog class
 //!
-class ParserCheckDialog final : public QDialog
+class ParserDialog final : public QDialog
 {
-    Q_OBJECT
-
-//    using FilePtr = std::shared_ptr<QFile>;
-//    using RawDataType = QPair<FilePtr, IPvParser*>;
-//    using RawDataTypeList = QList<RawDataType>;
     using RowData = QPair<QString, QString>;
     using TableDataType = QList<RowData>;
 
+    Q_OBJECT
 
 public:
 
 
-    ParserCheckDialog(QWidget *parent = nullptr);
+    ParserDialog(QWidget *parent = nullptr);
 
-    ~ParserCheckDialog();
+    ~ParserDialog();
 
     void setData(TableDataType&& data);
 
     void reset();
 
 private slots:
-    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
 
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
     void on_buttonBox_accepted();
 
 private:
 
     void setupModel(QTableWidget* table, const TableDataType& data);
-
-
 
 signals:
 
@@ -59,7 +52,6 @@ private:
 
     TableDataType data_;
     Ui::ParserCheck* ui_;
-    QList<IPvParser*> parsers_;
 };
 
 

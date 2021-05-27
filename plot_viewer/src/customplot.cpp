@@ -1,14 +1,24 @@
 #include "customplot.h"
+#include "plotparams.h"
+
 #include "qcustomplot.h"
-#include "common_types.h"
+
+#include "plot_factory.h"
 
 #include <QScreen>
 
+
+namespace name {
+
+const bool bPvPlotCreated = plot_viewer::FACTORY.Register(QCUSTOM_PLOT, std::make_unique<PvPlot>);
+
+}
+
 using namespace plot_viewer;
 
-extern "C" Library_EXPORT CustomPlotBuilderPtr Instance()
+extern "C" Library_EXPORT std::shared_ptr<IPlot> Instance()
 {
-    return PvPlot::CreateInstance();
+    return plot_viewer::FACTORY.Create(QCUSTOM_PLOT);
 }
 
 PvPlot::PvPlot()
@@ -102,7 +112,7 @@ void PvPlot::addValues(const std::vector<std::pair<double, double>> &values)
 
 void PvPlot::addGraph(const Graph &values, const QString &nameGraph)
 {
-    PvPlotParams *params = new PvPlotParams(defaultParams);
+    PvPlotParams *params = new PvPlotParams(DEFAULT_PLOT_PARAMS);
     params->setPlotName(nameGraph);
 
     auto graph = createGraph(params);
@@ -166,7 +176,7 @@ void PvPlot::draw()
 {
     for (auto graphValues : graphsValues_) {
 
-        PvPlotParams *params = new PvPlotParams(defaultParams);
+        PvPlotParams *params = new PvPlotParams(DEFAULT_PLOT_PARAMS);
         QCPGraph* graph = createGraph(params);
 
         if (graph != nullptr) {

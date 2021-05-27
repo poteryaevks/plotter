@@ -3,34 +3,30 @@
 
 #include <QMainWindow>
 
-#include "parsers/parser_interface.h"
-
-#include "qcustomplot.h"
-#include "functionstringdialog.h"
-#include "PvLineCalculator.h"
-#include "customplot.h"
 #include "common_types.h"
+
+using namespace plot_viewer;
 
 namespace Ui {
 class MainWindow;
 }
 
-class ParserCheckDialog;
-using namespace plot_viewer;
+class IPvParser;
+class IPlot;
+class ParserDialog;
 
 class MainWindow : public QMainWindow
 {
-    using FilePtr = std::shared_ptr<QFile>; //, std::function<void(QFile*)>
+    using FilePtr = std::shared_ptr<QFile>;
     using IPvParserPtr = IPvParser*;
-    using ParserCheckDialogPtr = std::unique_ptr<ParserCheckDialog>;
+    using ParserCheckDialogPtr = std::unique_ptr<ParserDialog>;
     using ParseFuncType = std::function<Graph(QString)>;
     using FileParserPair = QPair<FilePtr, IPvParserPtr>;
     using LibraryPtr = std::shared_ptr<QLibrary>;
-    using FunctionStringDialogPtr = std::unique_ptr<FunctionStringDialog>;
     typedef IPvParser* (*ParserLoader)();
-
     using RowData = QPair<QString, QString>;
     using TableDataType = QList<RowData>;
+    using CustomPlotBuilderPtr = std::shared_ptr<IPlot>;
 
     Q_OBJECT
 
@@ -48,12 +44,6 @@ public:
     ~MainWindow();
 
 public slots:
-
-    //!
-    //! \brief lineCalcExec
-    //! \param expression
-    //!
-    void lineCalcExec(const QString& expression);
 
     //!
     //! \brief loadParsers
@@ -126,18 +116,22 @@ private:
     //!
     LibraryPtr createLibrary(const QString& fileName);
 
+    //!
+    //! \brief createPlot
+    //! \param type
+    //! \return
+    //!
+    CustomPlotBuilderPtr createPlot(plot_viewer::ePlotType type);
+
 private:
 
-    FunctionStringDialogPtr functionDialog_;
-    Ui::MainWindow *ui_;
-    PvLineCalculator lineCalculator_;
-    QWidget *m_graphWidget;
+    Ui::MainWindow* ui_;
     ParserCheckDialogPtr parserDialog_;
     CustomPlotBuilderPtr plotImpl_;
-
     QList<FileParserPair> files_;
     QList<LibraryPtr> libraries_;                   //! загрузчик библиотеки парсера
     QMap<IPvParser*, QLibrary*> libraryConnecter_;
+    QWidget* graphWidget_;
 };
 
 #endif // MAINWINDOW_H

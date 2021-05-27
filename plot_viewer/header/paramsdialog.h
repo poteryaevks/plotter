@@ -12,13 +12,13 @@ namespace Ui {
     class ParamsDialog;
 }
 
-class ParamsDialog : public QDialog
+class PvParamsDialog : public QDialog
 {
         Q_OBJECT
 
     public:
-        explicit ParamsDialog(QList<PvPlotParams*>* data, QWidget *parent = 0);
-        ~ParamsDialog();
+        explicit PvParamsDialog(QList<PvPlotParams*>* data, QWidget *parent = 0);
+        ~PvParamsDialog();
 
     private:
         void setupModel();

@@ -72,13 +72,6 @@
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <addaction name="action_function"/>
-    <addaction name="actionSet_parser"/>
-   </widget>
    <widget class="QMenu" name="menuChart">
     <property name="title">
      <string>Chart</string>
@@ -87,7 +80,6 @@
    </widget>
    <addaction name="menu"/>
    <addaction name="menuChart"/>
-   <addaction name="menu_2"/>
   </widget>
   <action name="openAction">
    <property name="text">

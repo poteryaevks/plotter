@@ -1,13 +1,13 @@
 #ifndef CUSTOMPLOT_H
 #define CUSTOMPLOT_H
 
-#include "icustomplotbuilder.h"
-#include "plotparams.h"
+#include "iplot.h"
 #include "libraryglobal.h"
 #include "common_types.h"
 
 #include <QWidget>
 
+class PvPlotParams;
 class QCustomPlot;
 
 struct ConfigPlot {
@@ -16,8 +16,6 @@ struct ConfigPlot {
     double yAxisMax;
     double yAxisMin;
 };
-
-//using GraphValues = QVector<QPair<double, double>>;
 
 class Library_EXPORT PvPlot final
         : public IPlot
@@ -59,6 +57,7 @@ private:
     QCPGraph* createGraph(PvPlotParams *params);
     void updateAxis();
     void repaint();
+
     void setGraphColor(QCPGraph* g, QColor color);
 private:
 
@@ -69,5 +68,6 @@ private:
     QList<Graph> graphsValues_;
 
 };
+
 
 #endif // CUSTOMPLOT_H

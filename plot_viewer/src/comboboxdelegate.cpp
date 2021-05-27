@@ -15,6 +15,8 @@ QVariant ColorModel::data(const QModelIndex &index, int role) const
 //------------------------ColorDelegate------------------------//
 QWidget *ColorDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option)
+    Q_UNUSED(index)
     QComboBox *editor = new QComboBox(parent);
     ColorModel *model = new ColorModel(items, parent);
     editor->setModel(model);
