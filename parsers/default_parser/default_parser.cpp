@@ -12,8 +12,10 @@ plot_viewer::LineRawData DefaultParser::parse(QString line)
 
     for (int i = 0; i < (list.size() / 2); i++){
 
-        rawData << plot_viewer::Point(list[i * 2].toDouble(),
-                list[i * 2 + 1].toDouble());
+        rawData.push_back(
+                    plot_viewer::Point(list[i * 2].toDouble(),
+                    list[i * 2 + 1].toDouble())
+                );
     }
 
     return std::move(rawData);

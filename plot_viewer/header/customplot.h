@@ -10,20 +10,17 @@
 class PvPlotParams;
 class QCustomPlot;
 
-struct ConfigPlot {
-    double xAxisMax;
-    double xAxisMin;
-    double yAxisMax;
-    double yAxisMin;
-};
-
 class Library_EXPORT PvPlot final
         : public IPlot
 {
-
     using CustomPlotPtr = std::unique_ptr<QCustomPlot>;
-    using QCPGraphPtr = std::unique_ptr<QCPGraph>;
+    using GraphPtr = std::unique_ptr<QCPGraph>;
     using PvPlotParamsPtr = std::shared_ptr<PvPlotParams>;
+    using ParamsPtr = std::unique_ptr<PvPlotParams>;
+    using GraphParamsType =  std::pair<QCPGraph*, ParamsPtr>;
+
+    using Xs = QVector<double>;
+    using Ys = QVector<double>;
 
 public:
 
@@ -37,7 +34,6 @@ public:
     void showViewer() override;
     void clearViewer() override;
     void addValues(const Graph& values) override;
-    void addValues(const std::vector<std::pair<double, double>> &values) override;
     void addGraph(const Graph& values, const QString &nameGraph = QString()) override;
     void addGraph(Graph&& values, QString&& nameGraph = QString()) override;
     void xAxisMinChanged(double value) override;
@@ -48,25 +44,20 @@ public:
     void draw() override;
     void applyParams() override;
 
-    QList<PvPlotParams*>& params() override { return params_; }
-    QColor generateColor(QColor color);
-    QColor hsvToRgb(float h, float s, float v);
+    QList<PvPlotParams*> params() override;
+//    QColor generateColor(QColor color);
 
 private:
 
     QCPGraph* createGraph(PvPlotParams *params);
     void updateAxis();
     void repaint();
+    void setGraphColor(QCPGraph* graph, QColor color);
 
-    void setGraphColor(QCPGraph* g, QColor color);
 private:
 
-    ConfigPlot configPlot_;
     CustomPlotPtr plot_;
-    QVector<QCPGraph*> graphs_;
-    QList<PvPlotParams*> params_;
-    QList<Graph> graphsValues_;
-
+    std::vector<GraphParamsType> graphs_;
 };
 
 

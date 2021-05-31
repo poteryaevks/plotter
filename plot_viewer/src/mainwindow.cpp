@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui_->quitAction,       SIGNAL(triggered(bool)),                    qApp, SLOT(quit()));
     connect(parserDialog_.get(),   &ParserDialog::send,                        this, &MainWindow::loadParsers);
 
-    setWindowIcon(QIcon(":/graph.png"));
+    setWindowIcon(QIcon("graph.png"));
 }
 
 MainWindow::CustomPlotBuilderPtr MainWindow::createPlot(plot_viewer::ePlotType type)
@@ -92,7 +92,7 @@ void MainWindow::showParamsPlot()
 {
     if (plotImpl_ != nullptr) {
 
-        PvParamsDialog dialog(&plotImpl_->params(), this);
+        PvParamsDialog dialog(plotImpl_->params(), this);
 
         if (dialog.exec() == QDialog::Accepted) {
             plotImpl_->applyParams();
@@ -110,8 +110,11 @@ void MainWindow::runParserDialog()
 
         rowData.first = file.first->fileName();
 
-        if(file.second)
-            rowData.second = libraryConnecter_[file.second]->fileName();
+        if(file.second){
+
+            auto parser = file.second.get();
+            rowData.second = libraryConnecter_[parser]->fileName();
+        }
         else
             rowData.second = std::move(QString("default"));
 
@@ -229,16 +232,18 @@ void MainWindow::render(FileParserPair pair)
                                  lineRawData,
                                  parseFunc);
         if(success)
-            rawData << std::move(lineRawData);
+            rawData.push_back(
+                        std::move(lineRawData)
+                        );
     }
 
     QFileInfo fileInfo(*file);
 
     for(auto& graph : extractGraphs(rawData)){
 
-        QString graphName = std::move(
-                    QString("%1_%2").arg(fileInfo.fileName()).arg(GRAPH_NUM++)
-                    );
+        QString graphName = QString("%1_%2")
+                .arg(fileInfo.fileName())
+                .arg(GRAPH_NUM++);
 
         plotImpl_->addGraph(
                     graph,
@@ -250,10 +255,7 @@ void MainWindow::render(FileParserPair pair)
 MainWindow::FilePtr
 MainWindow::loadFile(QString fileName)
 {
-    auto file = FilePtr(new QFile(fileName),
-                        [](QFile* f){ f->close(); }
-            );
-
+    auto file = FilePtr(new QFile(fileName));
     if (!file->open(QFile::OpenModeFlag::ReadOnly)){
 
         qWarning("Unable to open data file");
@@ -263,9 +265,9 @@ MainWindow::loadFile(QString fileName)
     return file;
 }
 
-QList<Graph> MainWindow::extractGraphs(GraphRawData rawData)
+std::vector<Graph> MainWindow::extractGraphs(GraphRawData rawData)
 {
-    QList<Graph> graphs;
+    std::vector<Graph> graphs;
 
     for (auto& row : rawData) {
 
@@ -273,15 +275,23 @@ QList<Graph> MainWindow::extractGraphs(GraphRawData rawData)
 
             for (auto& point : row) {
                 Graph graph;
-                graph << std::move(point);
-                graphs << std::move(graph);
+
+                graph.push_back(
+                            std::move(point)
+                            );
+
+                graphs.push_back(
+                            std::move(graph)
+                            );
             }
         }
         else {
 
             int i { 0 };
             for (auto& point : row)
-                graphs[i++] << std::move(point);
+                graphs[i++].push_back(
+                            std::move(point)
+                            );
         }
     }
 
@@ -337,12 +347,10 @@ void MainWindow::setTitleChart()
 
 MainWindow::LibraryPtr MainWindow::createLibrary(const QString& fileName)
 {
-    return LibraryPtr(new QLibrary(fileName),
-                      [](QLibrary* lib) { lib->unload(); }
-    );
+    return LibraryPtr(new QLibrary(fileName));
 }
 
-IPvParser* MainWindow::loadParser(LibraryPtr library)
+MainWindow::IPvParserPtr MainWindow::loadParser(LibraryPtr library)
 {
     if(!library->load())
         return nullptr;
@@ -350,26 +358,22 @@ IPvParser* MainWindow::loadParser(LibraryPtr library)
     auto loadParserImpl = (ParserLoader)library->resolve("loadParser");
 
     if(loadParserImpl)
-        return loadParserImpl();
+        return IPvParserPtr(loadParserImpl());
     else
         return nullptr;
 }
 
-void MainWindow::loadParsers(QList<QPair<QString, QString>> list)
+void MainWindow::loadParsers(TableDataType tableData)
 {
     clear();
 
-    for(const auto& pair : list){
+    for(const auto& rowData : tableData){
 
-        auto fileName = pair.first;
-        auto parserPath = pair.second;
-
+        auto fileName = rowData.first;
+        auto parserPath = rowData.second;
         auto file = loadFile(fileName);
-
         auto library = createLibrary(parserPath);
-
         auto parser = loadParser(library);
-
 
         libraries_.push_back(
                     library
@@ -379,9 +383,10 @@ void MainWindow::loadParsers(QList<QPair<QString, QString>> list)
                     FileParserPair(file, parser)
                     );
 
-        libraryConnecter_.insert(parser,
-                                 library.get()
-                                 );
+        libraryConnecter_.insert(
+
+                    std::make_pair(parser.get(), library.get())
+                    );
     }
 
     for(const auto& file : files_)

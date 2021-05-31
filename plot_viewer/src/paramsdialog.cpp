@@ -1,9 +1,9 @@
 #include "paramsdialog.h"
 #include "ui_paramsdialog.h"
 
-PvParamsDialog::PvParamsDialog(QList<PvPlotParams*>* data, QWidget *parent) :
+PvParamsDialog::PvParamsDialog(QList<PvPlotParams*> data, QWidget *parent) :
     QDialog(parent),
-    m_pdata(data),
+    data_(data),
     ui(new Ui::ParamsDialog)
 {
     ui->setupUi(this);
@@ -34,20 +34,21 @@ void PvParamsDialog::setupModel()
 //    model->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Color") << tr("Line style") << tr("Point style"));
 //    QStandardItem *item = nullptr;
 
-    for(int i = 0; i < m_pdata->size(); ++i) {
+    for(int i = 0; i < data_.size(); ++i) {
+
         int numRow = ui->tableWidget->rowCount();
         ui->tableWidget->insertRow(numRow);
-        ui->tableWidget->setItem(numRow, 0, new QTableWidgetItem(m_pdata->at(i)->getPlotName()));
+        ui->tableWidget->setItem(numRow, 0, new QTableWidgetItem(data_.at(i)->getPlotName()));
 
         QTableWidgetItem *itemColor = new QTableWidgetItem;
-        itemColor->setBackgroundColor(m_pdata->at(i)->getColor());
+        itemColor->setBackgroundColor(data_.at(i)->getColor());
         ui->tableWidget->setItem(numRow, 1, itemColor);
 
-        auto ls_index = m_pdata->at(i)->getLineStyle();
+        auto ls_index = data_.at(i)->getLineStyle();
 //        item = new QStandardItem(defaultLs.key(ls_index));
         ui->tableWidget->setItem(numRow, 2, new QTableWidgetItem(defaultLs.key(ls_index)));
 
-        auto sc_index = m_pdata->at(i)->getScatterStyle();
+        auto sc_index = data_.at(i)->getScatterStyle();
 //        item = new QStandardItem(defaultScatters.key(sc_index));
         ui->tableWidget->setItem(numRow, 3, new QTableWidgetItem(defaultScatters.key(sc_index)));
     }
@@ -57,7 +58,7 @@ void PvParamsDialog::writeParams()
 {
     int i = 0;
 
-    for (auto it = (*m_pdata).begin(); it != (*m_pdata).end(); ++it) {
+    for (auto it = data_.begin(); it != data_.end(); ++it) {
         auto ls = ui->tableWidget->item(i, 2)->text();
         auto cs_style = ui->tableWidget->item(i, 3)->text();
         (*it)->setColor(ui->tableWidget->item(i, 1)->backgroundColor(), true);

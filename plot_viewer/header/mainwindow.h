@@ -18,7 +18,7 @@ class ParserDialog;
 class MainWindow : public QMainWindow
 {
     using FilePtr = std::shared_ptr<QFile>;
-    using IPvParserPtr = IPvParser*;
+    using IPvParserPtr = std::shared_ptr<IPvParser>;
     using ParserCheckDialogPtr = std::unique_ptr<ParserDialog>;
     using ParseFuncType = std::function<Graph(QString)>;
     using FileParserPair = QPair<FilePtr, IPvParserPtr>;
@@ -48,7 +48,7 @@ public slots:
     //!
     //! \brief loadParsers
     //!
-    void loadParsers(QList<QPair<QString, QString>>);
+    void loadParsers(TableDataType);
 
 private slots:
 
@@ -92,7 +92,7 @@ private:
     //! \param rawData
     //! \return
     //!
-    QList<Graph> extractGraphs(GraphRawData rawData);
+    std::vector<Graph> extractGraphs(GraphRawData rawData);
 
     //!
     //! \brief renderGraph
@@ -107,7 +107,7 @@ private:
     //! \param library
     //! \return
     //!
-    IPvParser* loadParser(LibraryPtr library);
+    IPvParserPtr loadParser(LibraryPtr library);
 
     //!
     //! \brief createLibrary
@@ -128,9 +128,9 @@ private:
     Ui::MainWindow* ui_;
     ParserCheckDialogPtr parserDialog_;
     CustomPlotBuilderPtr plotImpl_;
-    QList<FileParserPair> files_;
-    QList<LibraryPtr> libraries_;                   //! загрузчик библиотеки парсера
-    QMap<IPvParser*, QLibrary*> libraryConnecter_;
+    std::list<FileParserPair> files_;
+    std::list<LibraryPtr> libraries_;                   //! загрузчик библиотеки парсера
+    std::map<IPvParser*, QLibrary*> libraryConnecter_;
     QWidget* graphWidget_;
 };
 

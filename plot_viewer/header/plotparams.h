@@ -14,10 +14,16 @@ class PvPlotParams
 
 public:
 
-    PvPlotParams(Qt::GlobalColor color,
+    template<class T>
+    PvPlotParams(QColor color,
                  QCPScatterStyle::ScatterShape shape,
                  QCPGraph::LineStyle ls,
-                 const QString &name = "plot");
+                 T name = "plot")
+        : bCustomColor_(false)
+        , name_(std::forward<T>(name))
+        , color_(color)
+        , shape_(shape)
+        , ls_(ls) {}
 
     PvPlotParams(const PvPlotParams&) = default;
     PvPlotParams(PvPlotParams&&) = default;

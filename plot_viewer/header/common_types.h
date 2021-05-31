@@ -19,10 +19,10 @@ enum ePlotType {
 };
 
 
-using Point = QPair<double, double>;
-using LineRawData = QVector<Point>;
-using Graph = QVector<Point>;
-using GraphRawData = QVector<LineRawData>;
+using Point = std::pair<double, double>;
+using LineRawData = std::vector<Point>;
+using Graph = std::vector<Point>;
+using GraphRawData = std::vector<LineRawData>;
 
 static const QVector<Qt::GlobalColor> defaultColors
 {

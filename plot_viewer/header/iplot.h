@@ -47,7 +47,7 @@ public:
          * \brief addValues Добавить данные
          * \param values
          */
-    virtual void addValues(const std::vector<std::pair<double, double>> &values) = 0;
+//    virtual void addValues(const std::vector<std::pair<double, double>> &values) = 0;
     /*!
          * \brief addGraph Добавить график
          * \param values Данные для графика
@@ -106,7 +106,7 @@ public:
          * \brief params Получить список параметров для графиков
          */
 
-    virtual QList<PvPlotParams*>& params() = 0;
+    virtual QList<PvPlotParams*> params() = 0;
 
     virtual ~IPlot() = default;
 };

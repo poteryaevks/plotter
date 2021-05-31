@@ -24,6 +24,8 @@ public:
     //!
     virtual plot_viewer::LineRawData parse(QString);
 
+    ~CsvProxyParser();
+
     //!
     //! \brief CsvProxyParser
     //!
