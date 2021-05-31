@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui_->quitAction,       SIGNAL(triggered(bool)),                    qApp, SLOT(quit()));
     connect(parserDialog_.get(),   &ParserDialog::send,                        this, &MainWindow::loadParsers);
 
-    setWindowIcon(QIcon("graph.png"));
+    setWindowIcon(QIcon(":/main.png"));
 }
 
 MainWindow::CustomPlotBuilderPtr MainWindow::createPlot(plot_viewer::ePlotType type)
