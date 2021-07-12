@@ -1,7 +1,8 @@
 variables:
     GIT_SSL_NO_VERIFY: "true"
     
-stages:
+stages: 
+
   - build
   - test
   - deploy
@@ -12,7 +13,11 @@ build:
         - astra
 
     script:
-        - echo "build ok"
+        - mkdir build
+        - cd ./build
+        - qmake ../
+        - make
+
 
 test:
 
@@ -27,8 +32,6 @@ deploy:
 
     tags:
         - astra
-
-    #stage: deploying
     
     script:
         - echo "deploy ok"
