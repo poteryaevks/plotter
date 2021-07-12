@@ -14,7 +14,7 @@ build:
 
     script:
         - echo $(pwd)
-        - mkdir build
+        - sudo mkdir build
         - cd ./build
         - qmake ..
         - make
