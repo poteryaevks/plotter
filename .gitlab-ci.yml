@@ -14,10 +14,10 @@ build:
 
     script:
         - echo $(pwd)
-        - sudo mkdir build
-        - cd ./build
-        - qmake ..
-        - make
+        - echo  mkdir build
+        - echo  cd ./build
+        - echo  qmake ..
+        - echo  make
 
 
 test:
