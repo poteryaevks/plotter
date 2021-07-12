@@ -13,6 +13,7 @@ build:
         - astra
 
     script:
+        - echo cd
         - mkdir build
         - cd ./build
         - qmake ..
