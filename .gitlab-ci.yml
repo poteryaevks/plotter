@@ -1,0 +1,35 @@
+variables:
+    GIT_SSL_NO_VERIFY: "true"
+    
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+
+    tags:
+        - astra
+
+    script:
+        - echo "build ok"
+
+test:
+
+    tags:
+        - astra
+
+    script:
+        - echo "test ok"
+  
+  
+deploy:
+
+    tags:
+        - astra
+
+    #stage: deploying
+    
+    script:
+        - echo "deploy ok"
+    
