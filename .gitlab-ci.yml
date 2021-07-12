@@ -13,12 +13,12 @@ build:
         - astra
 
     script:
-        - echo $(pwd)
+        - echo "building..."
         - echo  mkdir build
         - echo  cd ./build
         - echo  qmake ..
         - echo  make
-
+        - echo "building is complete"
 
 test:
 
@@ -26,7 +26,8 @@ test:
         - astra
 
     script:
-        - echo "test ok"
+        - echo "testing..."
+        - echo "testing is complete"
   
   
 deploy:
@@ -35,5 +36,6 @@ deploy:
         - astra
     
     script:
-        - echo "deploy ok"
+        - echo "deploying..."
+        - echo "deploying is complete"
     
