@@ -16,14 +16,13 @@ build:
         - echo "building..."
         - mkdir build
         - cd ./build
-        - qmake ..
-        - make
+     #   - qmake ..
+     #   - make
         - echo "building is complete"
         
     artifacts:
         paths:
             - build
-
 
 test:
 
