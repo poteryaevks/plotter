@@ -14,10 +14,10 @@ build:
 
     script:
         - echo "building..."
-        - echo  mkdir build
-        - echo  cd ./build
-        - echo  qmake ..
-        - echo  make
+        - mkdir build
+        - cd ./build
+        - qmake ..
+        - make
         - echo "building is complete"
 
 test:
