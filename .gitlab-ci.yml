@@ -22,7 +22,7 @@ build:
         
         artifacts:
             paths:
-            - ./build
+            - build
 
 
 test:
