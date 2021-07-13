@@ -10,7 +10,7 @@ stages:
 build:
 
     tags:
-        - astra
+        - astra_plotter
 
     script:
         - echo "building..."
@@ -23,7 +23,7 @@ build:
 test:
 
     tags:
-        - astra
+        - astra_plotter
 
     script:
         - echo "testing..."
@@ -33,7 +33,7 @@ test:
 deploy:
 
     tags:
-        - astra
+        - astra_plotter
     
     script:
         - echo "deploying..."
