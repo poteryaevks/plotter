@@ -20,8 +20,8 @@ build:
         - make
         - echo "building is complete"
         
-        artifacts:
-            paths:
+    artifacts:
+        paths:
             - build
 
 
