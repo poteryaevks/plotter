@@ -1,7 +1,8 @@
 variables:
     GIT_SSL_NO_VERIFY: "true"
     
-stages:
+stages: 
+
   - build
   - test
   - deploy
@@ -9,27 +10,36 @@ stages:
 build:
 
     tags:
-        - astra
+        - astra_plotter
 
     script:
-        - echo "build ok"
+        - echo "building..."
+        - mkdir build
+        - cd ./build
+        - /usr/lib/x86_64-linux-gnu/qt5/bin/qmake ..
+        - make -j10
+        - echo "building is complete"
+        
+    artifacts:
+        paths:
+            - build
 
 test:
 
     tags:
-        - astra
+        - astra_plotter
 
     script:
-        - echo "test ok"
+        - echo "testing..."
+        - echo "testing is complete"
   
   
 deploy:
 
     tags:
-        - astra
-
-    #stage: deploying
+        - astra_plotter
     
     script:
-        - echo "deploy ok"
+        - echo "deploying..."
+        - echo "deploying is complete"
     
