@@ -53,10 +53,10 @@ public slots:
 private slots:
 
     void showHideLegend(bool p_onOff);
-    void on_Xmin_valueChanged(double xmin);
-    void on_Ymin_valueChanged(double ymin);
-    void on_Xmax_valueChanged(double xmax);
-    void on_Ymax_valueChanged(double ymax);
+//    void on_Xmin_valueChanged(double xmin);
+//    void on_Ymin_valueChanged(double ymin);
+//    void on_Xmax_valueChanged(double xmax);
+//    void on_Ymax_valueChanged(double ymax);
     void clear();
     void showContextMenu(QPoint);
     void showParamsPlot();
@@ -66,6 +66,14 @@ private slots:
     void print(QPrinter *printer);
     void setTitleChart();
     void runParserDialog();
+
+    void on_doubleSpinBoxYmax_valueChanged(double arg1);
+
+    void on_doubleSpinBoxYmin_valueChanged(double arg1);
+
+    void on_doubleSpinBoxXmax_valueChanged(double arg1);
+
+    void on_doubleSpinBoxXmin_valueChanged(double arg1);
 
 private:
 

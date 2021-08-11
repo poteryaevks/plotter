@@ -163,25 +163,6 @@ void MainWindow::showHideLegend(bool /*p_onOff*/)
     plotImpl_->showHideLegend();
 }
 
-void MainWindow::on_Xmin_valueChanged(double xmin)
-{
-    plotImpl_->xAxisMinChanged(xmin);
-}
-
-void MainWindow::on_Ymin_valueChanged(double ymin)
-{
-    plotImpl_->yAxisMinChanged(ymin);
-}
-
-void MainWindow::on_Xmax_valueChanged(double xmax)
-{
-    plotImpl_->xAxisMaxChanged(xmax);
-}
-
-void MainWindow::on_Ymax_valueChanged(double ymax)
-{
-    plotImpl_->yAxisMaxChanged(ymax);
-}
 
 void MainWindow::openFile()
 {
@@ -391,4 +372,46 @@ void MainWindow::loadParsers(TableDataType tableData)
 
     for(const auto& file : files_)
         render(file);
+}
+
+
+
+//void MainWindow::on_Xmin_valueChanged(double xmin)
+//{
+//    plotImpl_->xAxisMinChanged(xmin);
+//}
+
+//void MainWindow::on_Ymin_valueChanged(double ymin)
+//{
+//    plotImpl_->yAxisMinChanged(ymin);
+//}
+
+//void MainWindow::on_Xmax_valueChanged(double xmax)
+//{
+//    plotImpl_->xAxisMaxChanged(xmax);
+//}
+
+//void MainWindow::on_Ymax_valueChanged(double ymax)
+//{
+//    plotImpl_->yAxisMaxChanged(ymax);
+//}
+
+void MainWindow::on_doubleSpinBoxYmax_valueChanged(double arg1)
+{
+    plotImpl_->yAxisMaxChanged(arg1);
+}
+
+void MainWindow::on_doubleSpinBoxYmin_valueChanged(double arg1)
+{
+    plotImpl_->yAxisMinChanged(arg1);
+}
+
+void MainWindow::on_doubleSpinBoxXmax_valueChanged(double arg1)
+{
+    plotImpl_->xAxisMaxChanged(arg1);
+}
+
+void MainWindow::on_doubleSpinBoxXmin_valueChanged(double arg1)
+{
+    plotImpl_->xAxisMinChanged(arg1);
 }

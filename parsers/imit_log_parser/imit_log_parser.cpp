@@ -83,9 +83,6 @@ LineRawData ImitLogParser::parse(QString line)
     if(!success)
         throw std::runtime_error("Unable to parse line");
 
-    if(data.id != 3312)
-        throw std::runtime_error("Uncorrect object id");
-
     rawData.push_back(Point(data.time, data.b));
     rawData.push_back(Point(data.time, data.l));
     rawData.push_back(Point(data.time, data.h));

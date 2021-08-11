@@ -34,6 +34,7 @@ public:
 private:
 
     GrammarImplPtr grammar_;
+    int id_;
 };
 
 
@@ -42,7 +43,7 @@ private:
 //!
 struct CsvProxyLineData
 {
-    unsigned int id;
+    int id;
     double time;
     double b;
     double l;
@@ -54,7 +55,7 @@ struct CsvProxyLineData
 
 BOOST_FUSION_ADAPT_STRUCT(
         CsvProxyLineData,
-        (unsigned int, id)
+        (int, id)
         (double, time)
         (double, b)
         (double, l)

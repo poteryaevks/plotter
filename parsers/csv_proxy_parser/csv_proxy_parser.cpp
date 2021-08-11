@@ -9,12 +9,12 @@
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_stl.hpp>
-
-
 #include <boost/spirit/include/phoenix_fusion.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/variant/recursive_variant.hpp>
+
+#include <boost/format.hpp>
 
 //namespace {
 
@@ -73,7 +73,8 @@ using namespace plot_viewer;
 
 
 CsvProxyParser::CsvProxyParser()
-    : grammar_(std::make_unique<GrammarImpl<IteratorType>>())
+    : grammar_(std::make_unique<GrammarImpl<IteratorType>>()),
+      id_(std::numeric_limits<int>::min())
 {
 }
 
@@ -99,15 +100,30 @@ LineRawData CsvProxyParser::parse(QString line)
                              *(grammar_.get()),
                              data);
 
-    if(!success)
-        throw std::runtime_error("Unable to parse line");
+    if(!success){
 
-    if(data.id != 3312)
-        throw std::runtime_error("Uncorrect object id");
+        auto err = boost::format("Unable to parse line: \"%s\"") % line.toStdString();
+        throw std::runtime_error(err.str());
+    }
 
-    rawData.push_back(Point(data.time, data.b));
-    rawData.push_back(Point(data.time, data.l));
-    rawData.push_back(Point(data.time, data.h));
 
-    return rawData;
+    if(id_ == std::numeric_limits<int>::min())
+        id_ = data.id;
+
+    if(id_ == data.id){
+
+        rawData.push_back(Point(data.time, data.b));
+        rawData.push_back(Point(data.time, data.l));
+        rawData.push_back(Point(data.time, data.h));
+
+        rawData.push_back(Point(data.time, data.coord[0]));
+        rawData.push_back(Point(data.time, data.coord[1]));
+        rawData.push_back(Point(data.time, data.coord[2]));
+
+        rawData.push_back(Point(data.time, data.velocity[0]));
+        rawData.push_back(Point(data.time, data.velocity[1]));
+        rawData.push_back(Point(data.time, data.velocity[2]));
+    }
+
+    return std::move(rawData);
 }

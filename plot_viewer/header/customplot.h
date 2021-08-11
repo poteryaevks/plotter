@@ -58,6 +58,9 @@ private:
 
     CustomPlotPtr plot_;
     std::vector<GraphParamsType> graphs_;
+
+
+    double xMin_, xMax_, yMin_, yMax_;
 };
 
 

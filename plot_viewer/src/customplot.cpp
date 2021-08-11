@@ -130,6 +130,10 @@ extern "C" Library_EXPORT std::shared_ptr<IPlot> Instance()
 
 PvPlot::PvPlot()
     : plot_(std::make_unique<QCustomPlot>())
+    , xMin_(0)
+    , xMax_(0)
+    , yMin_(0)
+    , yMax_(0)
 {
     plot_->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     qDebug() << "Сreate QCustomPlot";
@@ -244,29 +248,37 @@ void PvPlot::addGraph(Graph&& values, QString&& nameGraph)
 
 void PvPlot::xAxisMinChanged(double value)
 {
-    Q_UNUSED(value)
-    //    zoom_.xMin = value;
+    //    Q_UNUSED(value)
+    xMin_ = value;
+    plot_->xAxis->setRange(xMin_, xMax_);
+    plot_->yAxis->setRange(yMin_, yMax_);
     repaint();
 }
 
 void PvPlot::xAxisMaxChanged(double value)
 {
-    Q_UNUSED(value)
-    //    zoom_.xMax = value;
+    //    Q_UNUSED(value)
+    xMax_ = value;
+    plot_->xAxis->setRange(xMin_, xMax_);
+    plot_->yAxis->setRange(yMin_, yMax_);
     repaint();
 }
 
 void PvPlot::yAxisMinChanged(double value)
 {
-    Q_UNUSED(value)
-    //    zoom_.yMin = value;
+    //    Q_UNUSED(value)
+    yMin_ = value;
+    plot_->xAxis->setRange(xMin_, xMax_);
+    plot_->yAxis->setRange(yMin_, yMax_);
     repaint();
 }
 
 void PvPlot::yAxisMaxChanged(double value)
 {
-    Q_UNUSED(value)
-    //    zoom_.yMax = value;
+    //    Q_UNUSED(value)
+    yMax_ = value;
+    plot_->xAxis->setRange(xMin_, xMax_);
+    plot_->yAxis->setRange(yMin_, yMax_);
     repaint();
 }
 
@@ -344,10 +356,10 @@ QCPGraph* PvPlot::createGraph(PvPlotParams *params)
 
 void PvPlot::updateAxis()
 {
-    double xMax {};
-    double xMin {};
-    double yMax {};
-    double yMin {};
+//    double xMax {};
+//    double xMin {};
+//    double yMax {};
+//    double yMin {};
 
     for (const auto& graph : graphs_) {
 
@@ -356,20 +368,20 @@ void PvPlot::updateAxis()
             return;
 
         auto minX = getMinX(graphImpl);
-        xMin = std::min(minX, xMin);
+        xMin_ = std::min(minX, xMin_);
 
         auto maxX = getMaxX(graphImpl);
-        xMax = std::max(maxX, xMax);
+        xMax_ = std::max(maxX, xMax_);
 
         auto minY = getMinY(graphImpl);
-        yMin = std::min(minY, yMin);
+        yMin_ = std::min(minY, yMin_);
 
         auto maxY = getMaxY(graphImpl);
-        yMax = std::max(maxY, yMax);
+        yMax_ = std::max(maxY, yMax_);
     }
 
-    plot_->xAxis->setRange(xMin, xMax);
-    plot_->yAxis->setRange(yMin, yMax);
+    plot_->xAxis->setRange(xMin_, xMax_);
+    plot_->yAxis->setRange(yMin_, yMax_);
 }
 
 void PvPlot::repaint()
